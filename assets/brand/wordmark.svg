@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
+  <defs>
+    <linearGradient id="wm-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5EFE2"/>
+      <stop offset="100%" stop-color="#EAE2CF"/>
+    </linearGradient>
+    <linearGradient id="wm-hex" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#D87432"/>
+      <stop offset="100%" stop-color="#B8531F"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="400" fill="url(#wm-bg)"/>
+
+  <!-- Hexagon mark, left side -->
+  <g transform="translate(200, 200)">
+    <polygon points="0,-128 110,-64 110,64 0,128 -110,64 -110,-64"
+             fill="none" stroke="#B8531F" stroke-width="3" opacity="0.5"/>
+    <polygon points="0,-100 86,-50 86,50 0,100 -86,50 -86,-50"
+             fill="none" stroke="#B8531F" stroke-width="2"
+             stroke-dasharray="4 6" opacity="0.4"/>
+    <polygon points="0,-72 62,-36 62,36 0,72 -62,36 -62,-36"
+             fill="url(#wm-hex)"/>
+    <polygon points="0,-72 62,-36 0,-12 -62,-36"
+             fill="#FFFFFF" opacity="0.12"/>
+
+    <!-- Bee centered -->
+    <g transform="scale(0.65)">
+      <ellipse cx="0" cy="0" rx="34" ry="46" fill="#14181F"/>
+      <path d="M -28 -18 Q 0 -22 28 -18 L 28 -8 Q 0 -12 -28 -8 Z" fill="#E0A82E"/>
+      <path d="M -32 6 Q 0 2 32 6 L 32 18 Q 0 14 -32 18 Z" fill="#E0A82E"/>
+      <circle cx="0" cy="-38" r="14" fill="#14181F"/>
+      <path d="M -5 -50 Q -10 -58 -8 -64" stroke="#14181F" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <path d="M 5 -50 Q 10 -58 8 -64" stroke="#14181F" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <circle cx="-8" cy="-64" r="2" fill="#14181F"/>
+      <circle cx="8" cy="-64" r="2" fill="#14181F"/>
+      <ellipse cx="-26" cy="-14" rx="22" ry="14" fill="#F5EFE2" opacity="0.85"
+               transform="rotate(-25 -26 -14)"/>
+      <ellipse cx="26" cy="-14" rx="22" ry="14" fill="#F5EFE2" opacity="0.85"
+               transform="rotate(25 26 -14)"/>
+      <path d="M -8 42 Q 0 52 8 42" fill="#14181F"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="380" y="225" font-family="'Fraunces', Georgia, serif"
+        font-size="120" font-weight="400" fill="#14181F"
+        letter-spacing="-3">OpenBag</text>
+
+  <!-- Tagline -->
+  <text x="382" y="265" font-family="'Geist Mono', monospace"
+        font-size="18" letter-spacing="3.6" fill="#B8531F"
+        text-transform="uppercase">IDENTITY · AGENT · REPUTATION</text>
+
+  <!-- Subtle bottom line -->
+  <line x1="380" y1="288" x2="900" y2="288"
+        stroke="#14181F" stroke-width="1" opacity="0.2"/>
+
+  <text x="380" y="318" font-family="'Geist', sans-serif"
+        font-size="20" fill="#4A4F58" font-style="italic">
+    Open standard for last-mile delivery.
+  </text>
+</svg>
