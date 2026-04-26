@@ -1,0 +1,11 @@
+# Lychee link checker config
+exclude = [
+  "localhost",
+  "127.0.0.1",
+  "example.com",
+  "^#",
+]
+exclude_path = ["node_modules", ".git"]
+max_redirects = 5
+timeout = 20
+accept = [200, 204, 206, 301, 302, 403, 429]
