@@ -1,0 +1,21 @@
+{
+  "name": "@openbag/skill-cli",
+  "version": "0.1.0",
+  "description": "CLI for creating, testing, and publishing OpenBag skills",
+  "main": "index.js",
+  "bin": {
+    "openbag": "./index.js"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": ["openbag", "skill", "cli"],
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.6",
+    "js-yaml": "^4.1.0",
+    "ajv": "^8.12.0"
+  }
+}

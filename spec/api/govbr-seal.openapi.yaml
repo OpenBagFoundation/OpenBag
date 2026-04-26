@@ -1,0 +1,463 @@
+openapi: 3.1.0
+
+info:
+  title: OpenBag Selo Digital API
+  version: 0.1.0
+  summary: Public API for issuing, verifying, and managing the OpenBag Digital Seal anchored on Gov.br.
+  description: |
+    The OpenBag Selo Digital API is the canonical interface between the OpenBag
+    Foundation, Gov.br (federal identity authority), platform integrators
+    (iFood, Rappi, Keeta, Uber Eats), and citizen verification clients.
+
+    ## Design principles
+
+    - **LGPD-first** — no plaintext CPF in any request/response. CPFs are SHA-256 hashed (`worker_hash`) at the boundary; the raw value never enters Foundation infrastructure.
+    - **Local-first** — sensitive worker data lives on the worker's device (OpenBag Agent). The Foundation only stores the minimum needed for cross-device verification.
+    - **Public verification** — `GET /verify/{seal_code}` is the only unauthenticated endpoint; designed for citizen App Verifica with strict rate limits.
+    - **Kill switch** — `PATCH /worker/{worker_hash}/status` propagates `REVOGADO` to all caches in <30s.
+    - **Audit trail** — every write is logged with operator identity and reason. Logs are immutable (append-only) and publicly attestable via Merkle root.
+
+    ## LGPD legal basis (Lei 13.709/2018)
+
+    - Identity processing: Art. 7, II (consent) + Art. 7, IX (legitimate interest in public safety)
+    - Biometric reference (hash only): Art. 11, II, "a" (consent for sensitive data)
+    - Sentinel reports: Art. 7, IX (crime prevention)
+
+    See `docs/LGPD-analysis.md` for the full compliance analysis.
+  contact:
+    name: OpenBag Foundation Tech Council
+    email: tech@openbag.foundation
+    url: https://openbag.foundation
+  license:
+    name: MIT
+    identifier: MIT
+
+servers:
+  - url: https://api-staging.openbag.foundation/v0/selo
+    description: Staging (no real worker data)
+  - url: https://api.openbag.foundation/v0/selo
+    description: Production (placeholder — not yet live)
+
+tags:
+  - name: issuance
+    description: Issue and re-issue Digital Seals.
+  - name: verification
+    description: Citizen-facing verification endpoints.
+  - name: management
+    description: Status changes, suspension, revocation.
+  - name: coverage
+    description: Public coverage statistics for transparency.
+  - name: meta
+    description: Health, version, attestation.
+
+security:
+  - BearerAuth: []
+  - ApiKeyAuth: []
+
+paths:
+
+  /issue:
+    post:
+      tags: [issuance]
+      summary: Issue a new Digital Seal for a worker.
+      description: |
+        Requires: (1) Gov.br OAuth2 token with `openbag:issue` scope, AND
+        (2) a fresh `biometric_session_id` (≤300s old) from Serpro liveness check.
+        The CPF is consumed but never stored — only `worker_hash = SHA256(cpf+salt)` is persisted.
+      operationId: issueSeal
+      security:
+        - BearerAuth: [openbag:issue]
+      x-openbag-audit: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SealIssueRequest'
+            example:
+              cpf: "12345678900"
+              full_name: "João da Silva"
+              birth_date: "1991-03-14"
+              platforms: ["IFOOD", "RAPPI"]
+              biometric_session_id: "bio-sess-3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              academy_certificate: "openbag-academy/2026-04/heliopolis/042"
+              consent_version: "lgpd-consent-2026-04-15"
+      responses:
+        '201':
+          description: Seal issued successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DigitalSeal'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Biometric session expired, SINESP block, or consent version stale.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Active seal already exists for this worker_hash.
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /verify/{seal_code}:
+    get:
+      tags: [verification]
+      summary: Public verification of a seal by short code.
+      description: |
+        **Unauthenticated** endpoint used by citizen App Verifica. Returns the
+        minimum information needed for verification: status, tier, masked name,
+        active platforms, and an anonymized geohash if the worker is `EM_ROTA`.
+
+        Rate-limited to 100 req/min per IP. Aggregated query analytics are
+        published in the quarterly transparency report.
+      operationId: verifySeal
+      security: []
+      parameters:
+        - in: path
+          name: seal_code
+          required: true
+          schema:
+            type: string
+            pattern: '^OBAG-[A-Z0-9]{6}-[A-Z0-9]{4}-[A-Z0-9]{2}$'
+            example: "OBAG-A1B2C3-Z9Y8-X4"
+      responses:
+        '200':
+          description: Verification result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationResult'
+              example:
+                seal:
+                  seal_code: "OBAG-A1B2C3-Z9Y8-X4"
+                  worker_hash: "sha256:9f7b...trunc"
+                  masked_name: "J*** S****"
+                  status: "EM_ROTA"
+                  tier: "PRATA"
+                  platforms: ["IFOOD"]
+                  issued_at: "2026-03-12T08:00:00-03:00"
+                  expires_at: "2027-03-12T08:00:00-03:00"
+                  active_geohash: "6gyf4"
+                verified_at: "2026-04-26T14:32:11-03:00"
+                verifier_type: "CITIZEN"
+        '404':
+          description: Seal not found.
+        '410':
+          description: Seal revoked. Worker is no longer authorized.
+        '429':
+          $ref: '#/components/responses/RateLimited'
+      x-rate-limit:
+        scope: ip
+        limit: 100
+        window: 60s
+
+  /worker/{worker_hash}:
+    get:
+      tags: [verification]
+      summary: Get current seal for a worker (by hash).
+      description: For platform integrators verifying their own worker base. Requires API key.
+      operationId: getWorkerSeal
+      security:
+        - ApiKeyAuth: []
+        - BearerAuth: [openbag:read]
+      parameters:
+        - $ref: '#/components/parameters/WorkerHashPath'
+      responses:
+        '200':
+          description: Worker seal.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DigitalSeal'
+        '404':
+          description: Worker not found.
+
+  /worker/{worker_hash}/status:
+    patch:
+      tags: [management]
+      summary: Update seal status (suspend, revoke, reactivate).
+      description: |
+        **Kill switch endpoint.** Status changes propagate to all CDN edge caches
+        and platform mirrors within 30 seconds (target SLO; alerted at >60s).
+
+        Requires Gov.br JWT with `openbag:admin` scope. Every change is audit
+        logged with operator identity, reason, and the prior status. Logs are
+        published as Merkle roots to the Foundation's transparency endpoint.
+      operationId: updateSealStatus
+      security:
+        - BearerAuth: [openbag:admin]
+      x-openbag-audit: true
+      parameters:
+        - $ref: '#/components/parameters/WorkerHashPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SealUpdateRequest'
+            example:
+              status: "SUSPENSO"
+              reason: "Sentinel report under CIOPS investigation (case #2026-04-1138)."
+              operator_id: "ciops-sp-op-204"
+              evidence_url: "https://transparency.openbag.foundation/cases/2026-04-1138"
+      responses:
+        '200':
+          description: Status updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DigitalSeal'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          description: Invalid state transition (e.g. attempting to reactivate a REVOGADO seal).
+
+  /worker/{worker_hash}/verify-biometric:
+    post:
+      tags: [management]
+      summary: Trigger fresh biometric re-verification.
+      description: Used at platform onboarding renewal or when liveness check is needed.
+      operationId: triggerBiometricVerify
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/WorkerHashPath'
+      responses:
+        '202':
+          description: Re-verification initiated; webhook will fire on completion.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  biometric_session_id: { type: string }
+                  expires_in: { type: integer, description: "Seconds until session expires" }
+
+  /coverage:
+    get:
+      tags: [coverage]
+      summary: Public coverage statistics.
+      description: |
+        Returns coverage by geohash precision-5 cell (~5km). Used by App Verifica
+        to display the "Cobertura OpenBag" banner. Data refreshed every 5 minutes.
+      operationId: getCoverage
+      security: []
+      parameters:
+        - in: query
+          name: geohash_prefix
+          schema:
+            type: string
+            pattern: '^[0-9bcdefghjkmnpqrstuvwxyz]{1,5}$'
+          description: Limit results to cells under this geohash prefix.
+        - in: query
+          name: platform
+          schema:
+            $ref: '#/components/schemas/Platform'
+      responses:
+        '200':
+          description: Coverage statistics.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  generated_at: { type: string, format: date-time }
+                  cells:
+                    type: array
+                    items: { $ref: '#/components/schemas/CoverageCell' }
+              example:
+                generated_at: "2026-04-26T14:30:00-03:00"
+                cells:
+                  - geohash: "6gyf4"
+                    name: "Heliópolis-Sacomã"
+                    coverage_pct: 87
+                    active_workers: 1247
+                    platform_breakdown:
+                      IFOOD: 92
+                      RAPPI: 68
+                  - geohash: "6gyf6"
+                    name: "Moema"
+                    coverage_pct: 34
+                    active_workers: 412
+                    platform_breakdown:
+                      IFOOD: 41
+                      RAPPI: 22
+
+  /health:
+    get:
+      tags: [meta]
+      summary: Service health check.
+      operationId: health
+      security: []
+      responses:
+        '200':
+          description: Healthy.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { enum: [ok, degraded] }
+                  version: { type: string }
+                  kill_switch_propagation_p95_ms: { type: integer }
+
+components:
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Gov.br OAuth2 JWT. Required scopes documented per endpoint.
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-OpenBag-Platform-Key
+      description: Platform integration key. Issued by Foundation under signed MOU. Rotated quarterly.
+
+  parameters:
+    WorkerHashPath:
+      in: path
+      name: worker_hash
+      required: true
+      schema:
+        type: string
+        pattern: '^sha256:[a-f0-9]{8,64}(\.\.\.trunc)?$'
+        example: "sha256:9f7b3a2e1d4c5b6a"
+      description: SHA-256 hash of CPF+salt. Foundation never sees raw CPF.
+
+  schemas:
+
+    Platform:
+      type: string
+      enum: [IFOOD, RAPPI, KEETA, UBER_EATS, MERCADO_LIVRE, OUTROS]
+
+    SealStatus:
+      type: string
+      enum: [PENDENTE, ATIVO, EM_ROTA, SUSPENSO, REVOGADO, REJEITADO]
+      description: |
+        - **PENDENTE**: validations in progress
+        - **ATIVO**: valid seal, worker authorized
+        - **EM_ROTA**: worker on an active route
+        - **SUSPENSO**: temporary hold (report under investigation)
+        - **REVOGADO**: terminated (kill switch propagated, terminal)
+        - **REJEITADO**: issuance denied (terminal)
+
+    SealTier:
+      type: string
+      enum: [BRONZE, PRATA, OURO, DIAMANTE]
+      description: Civic reputation tier. See `spec/05-reputation.md`.
+
+    DigitalSeal:
+      type: object
+      required: [seal_id, seal_code, worker_hash, status, tier, platforms, issued_at, expires_at]
+      properties:
+        seal_id: { type: string, format: uuid }
+        seal_code:
+          type: string
+          pattern: '^OBAG-[A-Z0-9]{6}-[A-Z0-9]{4}-[A-Z0-9]{2}$'
+          description: Short human-readable code shown in QR / app.
+        worker_hash: { type: string, pattern: '^sha256:[a-f0-9]{8,64}(\.\.\.trunc)?$' }
+        masked_name:
+          type: string
+          description: First initial + asterisks. e.g. "J*** S****".
+        status: { $ref: '#/components/schemas/SealStatus' }
+        tier: { $ref: '#/components/schemas/SealTier' }
+        platforms:
+          type: array
+          items: { $ref: '#/components/schemas/Platform' }
+        issued_at: { type: string, format: date-time }
+        expires_at: { type: string, format: date-time }
+        last_verified_at: { type: string, format: date-time, nullable: true }
+        active_geohash:
+          type: string
+          pattern: '^[0-9bcdefghjkmnpqrstuvwxyz]{5}$'
+          nullable: true
+          description: Anonymized location (~5km cell), only when status=EM_ROTA.
+        kill_switch_at: { type: string, format: date-time, nullable: true }
+        kill_switch_reason: { type: string, nullable: true }
+
+    SealIssueRequest:
+      type: object
+      required: [cpf, full_name, birth_date, platforms, biometric_session_id, consent_version]
+      properties:
+        cpf:
+          type: string
+          pattern: '^\d{11}$'
+          description: Raw CPF. Hashed immediately on receipt; never persisted.
+          writeOnly: true
+        full_name: { type: string, minLength: 3, maxLength: 200 }
+        birth_date: { type: string, format: date }
+        platforms:
+          type: array
+          minItems: 1
+          items: { $ref: '#/components/schemas/Platform' }
+        biometric_session_id: { type: string }
+        academy_certificate: { type: string, nullable: true }
+        consent_version: { type: string, description: "Version of LGPD consent the worker signed." }
+
+    SealUpdateRequest:
+      type: object
+      required: [status, reason, operator_id]
+      properties:
+        status: { $ref: '#/components/schemas/SealStatus' }
+        reason: { type: string, minLength: 10, maxLength: 1000 }
+        operator_id: { type: string }
+        evidence_url: { type: string, format: uri, nullable: true }
+
+    VerificationResult:
+      type: object
+      required: [seal, verified_at, verifier_type]
+      properties:
+        seal: { $ref: '#/components/schemas/DigitalSeal' }
+        verified_at: { type: string, format: date-time }
+        verifier_type: { type: string, enum: [CITIZEN, PLATFORM, GOV] }
+
+    CoverageCell:
+      type: object
+      properties:
+        geohash: { type: string, pattern: '^[0-9bcdefghjkmnpqrstuvwxyz]{5}$' }
+        name: { type: string, nullable: true, description: "Friendly neighborhood name when known." }
+        coverage_pct: { type: integer, minimum: 0, maximum: 100 }
+        active_workers: { type: integer, minimum: 0 }
+        platform_breakdown:
+          type: object
+          additionalProperties: { type: integer, minimum: 0, maximum: 100 }
+
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string, example: "SINESP_BLOCK" }
+        message: { type: string }
+        details:
+          type: object
+          additionalProperties: true
+        request_id: { type: string }
+
+  responses:
+    BadRequest:
+      description: Malformed request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    Unauthorized:
+      description: Missing or invalid credentials.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    RateLimited:
+      description: Rate limit exceeded.
+      headers:
+        X-RateLimit-Limit: { schema: { type: integer } }
+        X-RateLimit-Remaining: { schema: { type: integer } }
+        X-RateLimit-Reset: { schema: { type: integer, description: "Unix epoch seconds" } }
+        Retry-After: { schema: { type: integer, description: "Seconds" } }
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
