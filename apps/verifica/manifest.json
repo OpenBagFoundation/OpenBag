@@ -1,0 +1,26 @@
+{
+  "name": "OpenBag Verifica",
+  "short_name": "OBVerifica",
+  "description": "Verifique entregadores com Selo OpenBag em segundos.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fdf8f0",
+  "theme_color": "#b45309",
+  "orientation": "portrait",
+  "categories": ["utilities", "social"],
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "../../assets/brand/avatar-primary-128.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "../../assets/brand/avatar-primary-256.png", "sizes": "256x256", "type": "image/png" },
+    { "src": "../../assets/brand/avatar-primary-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "../../assets/brand/avatar-primary-1024.png", "sizes": "1024x1024", "type": "image/png" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Escanear QR",
+      "short_name": "Scan",
+      "url": "./index.html#scan",
+      "description": "Abrir câmera para escanear QR Code"
+    }
+  ]
+}
