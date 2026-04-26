@@ -2,16 +2,16 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://openbag.foundation/schemas/skill-manifest-v1.json",
   "title": "OpenBag Skill Manifest",
-  "description": "Schema for SKILL.yaml manifests describing OpenBag Agent skills. Inspired by OpenClaw SKILL.md format.",
+  "description": "JSON Schema for SKILL.yaml manifests. Aligns with OpenClaw AgentSkills manifest format adapted for OpenBag. Validate with: openbag skill validate",
   "type": "object",
   "additionalProperties": false,
-  "required": ["name", "version", "description", "author", "license", "permissions"],
+  "required": ["name", "version", "license", "description", "category", "permissions"],
   "properties": {
     "name": {
       "type": "string",
-      "description": "Unique skill identifier. Lowercase, hyphen-separated, prefixed 'skill-'.",
-      "pattern": "^skill-[a-z0-9][a-z0-9-]{2,40}$",
-      "examples": ["skill-verify", "skill-sentinel", "skill-finance"]
+      "description": "Unique skill identifier. Must start with 'skill-', lowercase, hyphen-separated.",
+      "pattern": "^skill-[a-z0-9][a-z0-9-]{1,40}$",
+      "examples": ["skill-verify", "skill-finance", "skill-defensive"]
     },
     "version": {
       "type": "string",
@@ -19,224 +19,159 @@
       "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$",
       "examples": ["0.1.0", "1.0.0", "2.3.4-beta.1"]
     },
-    "display_name": {
+    "license": {
       "type": "string",
-      "description": "Human-readable name shown in agent UI. Localizable via i18n object.",
-      "maxLength": 60
+      "description": "SPDX identifier. OpenBag Foundation policy: open-source only.",
+      "enum": ["MIT", "Apache-2.0", "BSD-3-Clause", "BSD-2-Clause", "MPL-2.0", "ISC", "GPL-3.0-or-later", "AGPL-3.0-or-later", "Unlicense", "CC0-1.0"]
+    },
+    "authors": {
+      "type": "array",
+      "description": "List of authors/maintainers. Format: 'Name <email>' (RFC 2822).",
+      "items": {
+        "type": "string",
+        "pattern": "^.+ <.+@.+>$"
+      },
+      "minItems": 1,
+      "examples": [["OpenBag Foundation <tech@openbag.foundation>"], ["Sebrae Brasil <ti@sebrae.com.br>"]]
     },
     "description": {
       "type": "string",
-      "description": "Short (1-2 sentence) description of what the skill does. Required for registry listing.",
+      "description": "Plain-text description of what the skill does. 1-3 sentences. Shown in ClawHub-BR listing.",
       "minLength": 20,
-      "maxLength": 500
-    },
-    "author": {
-      "type": "object",
-      "description": "Skill author/maintainer information.",
-      "required": ["name"],
-      "additionalProperties": false,
-      "properties": {
-        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
-        "email": { "type": "string", "format": "email" },
-        "url": { "type": "string", "format": "uri" },
-        "organization": { "type": "string" }
-      }
-    },
-    "license": {
-      "type": "string",
-      "description": "SPDX identifier. Open-source licenses only (Foundation policy).",
-      "enum": ["MIT", "Apache-2.0", "BSD-3-Clause", "BSD-2-Clause", "MPL-2.0", "ISC", "GPL-3.0-or-later", "AGPL-3.0-or-later", "Unlicense", "CC0-1.0"]
-    },
-    "min_agent_version": {
-      "type": "string",
-      "description": "Minimum required OpenBag Agent version (semver).",
-      "pattern": "^\\d+\\.\\d+\\.\\d+$",
-      "default": "0.1.0"
-    },
-    "platforms": {
-      "type": "array",
-      "description": "Supported runtime platforms.",
-      "items": { "enum": ["ios", "android", "web", "desktop"] },
-      "minItems": 1,
-      "uniqueItems": true,
-      "default": ["ios", "android"]
+      "maxLength": 600
     },
     "category": {
       "type": "string",
-      "description": "Primary category for ClawHub-BR registry browsing.",
-      "enum": ["core", "verification", "safety", "finance", "health", "education", "legal", "civic", "utility", "experimental"]
+      "description": "Primary category: core (Foundation-maintained, pre-installed), community (ClawHub-BR), or experimental.",
+      "enum": ["core", "core-sensitive", "community", "experimental"]
     },
-    "tags": {
-      "type": "array",
-      "description": "Searchable tags for ClawHub-BR.",
-      "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,30}$" },
-      "maxItems": 10,
-      "uniqueItems": true
+    "maturity": {
+      "type": "string",
+      "description": "Maturity level. 'stable' required for core skills.",
+      "enum": ["stable", "beta", "alpha", "deprecated"],
+      "default": "alpha"
     },
     "permissions": {
+      "type": "array",
+      "description": "Capabilities the skill needs. User approves each at install. Principle of least privilege enforced by Gateway.",
+      "items": {
+        "type": "string",
+        "oneOf": [
+          { "pattern": "^read:(reputation_tier|platform_list|status_current|academy_progress|rewards_balance|route_current)$",
+            "description": "Read-only access to worker agent data" },
+          { "pattern": "^write:(agent_inbox|reputation_event|route_event|academy_event)$",
+            "description": "Write access to agent data" },
+          { "pattern": "^http:[a-z0-9.-]+\\.[a-z]{2,}/.*$",
+            "description": "HTTP access to specific domain+path (e.g. http:sebrae.com.br/api/mei/*)" },
+          { "pattern": "^ble:(scan|advertise|pair_hardware)$",
+            "description": "Bluetooth Low Energy access" },
+          { "pattern": "^nfc:(read|write)$",
+            "description": "NFC tag access" },
+          { "pattern": "^location:(geohash5|geohash7|exact)$",
+            "description": "Location at specified precision" },
+          { "pattern": "^notifications:(local|push)$",
+            "description": "Push or local notifications" },
+          { "pattern": "^storage:(encrypted_local)$",
+            "description": "Access to encrypted local SQLCipher store" },
+          { "pattern": "^biometric:verify$",
+            "description": "Device-level biometric confirmation (FaceID/fingerprint)" },
+          { "pattern": "^camera:(qr_only|photo)$",
+            "description": "Camera access (qr_only recommended)" },
+          { "pattern": "^ipc:skill-[a-z0-9-]+$",
+            "description": "Local IPC call to another installed skill" }
+        ]
+      },
+      "uniqueItems": true,
+      "examples": [
+        ["read:reputation_tier", "write:agent_inbox", "http:sebrae.com.br/api/mei/*"],
+        ["ble:scan", "nfc:read", "write:reputation_event"]
+      ]
+    },
+    "dependencies": {
       "type": "object",
-      "description": "Capabilities the skill needs to function. User must approve at install. Principle of least privilege enforced.",
+      "description": "Version constraints on runtime and peer skills.",
       "additionalProperties": false,
       "properties": {
-        "ble": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "scan": { "type": "boolean", "description": "Scan for BLE beacons (read-only, passive)." },
-            "advertise": { "type": "boolean", "description": "Broadcast BLE advertisements (worker bag/badge only)." },
-            "connect": { "type": "boolean", "description": "Establish GATT connections (rare; firmware updates only)." }
-          }
+        "agent": {
+          "type": "string",
+          "description": "Minimum OpenBag Agent version (semver range).",
+          "examples": [">= 0.5.0", "^1.0.0"]
         },
-        "nfc": {
+        "skills": {
           "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "read": { "type": "boolean", "description": "Read NFC tags (citizen verification)." },
-            "write": { "type": "boolean", "description": "Write to NFC tags (factory provisioning only — restricted)." }
-          }
-        },
-        "location": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["precision"],
-          "properties": {
-            "precision": {
-              "enum": ["geohash5", "geohash7", "exact"],
-              "description": "Maximum precision allowed. geohash5 (~5km) for routine, exact only for active route or panic."
-            },
-            "background": {
-              "type": "boolean",
-              "default": false,
-              "description": "Continue location reporting in background. Requires explicit user re-consent every 30 days."
-            }
-          }
-        },
-        "notifications": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "local": { "type": "boolean", "description": "Show local on-device notifications." },
-            "push": { "type": "boolean", "description": "Receive remote push notifications via APNs/FCM." }
-          }
-        },
-        "network": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["domains"],
-          "properties": {
-            "domains": {
-              "type": "array",
-              "description": "Whitelisted hostnames. No wildcards. Foundation-allowed domains only.",
-              "items": { "type": "string", "pattern": "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$" },
-              "minItems": 1,
-              "maxItems": 20,
-              "uniqueItems": true
-            },
-            "methods": {
-              "type": "array",
-              "items": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
-              "default": ["GET", "POST"],
-              "uniqueItems": true
-            }
-          }
-        },
-        "storage": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "encrypted_local": { "type": "boolean", "description": "Use SQLCipher local store (default for sensitive data)." },
-            "max_mb": { "type": "integer", "minimum": 1, "maximum": 500, "description": "Maximum storage quota in MB." }
-          }
-        },
-        "biometric": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "verify": { "type": "boolean", "description": "Trigger device-level biometric (FaceID/fingerprint) for confirmation." }
-          }
-        },
-        "camera": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "qr_only": { "type": "boolean", "description": "Camera limited to QR/barcode scanning (no photo capture)." },
-            "photo": { "type": "boolean", "description": "Full photo capture (requires explicit user consent each session)." }
-          }
-        },
-        "skills_ipc": {
-          "type": "array",
-          "description": "Other skills this skill may invoke via local IPC.",
-          "items": { "type": "string", "pattern": "^skill-[a-z0-9][a-z0-9-]{2,40}$" },
-          "uniqueItems": true
+          "description": "Required peer skills and their minimum versions.",
+          "additionalProperties": { "type": "string" },
+          "examples": [{ "skill-rep": ">= 1.0.0" }]
         }
       }
     },
     "hooks": {
       "type": "object",
-      "description": "Lifecycle hook entry points.",
+      "description": "Lifecycle hook entry points (relative paths from skill root).",
       "additionalProperties": false,
       "properties": {
-        "on_install": { "type": "string", "description": "Path to install handler script." },
-        "on_activate": { "type": "string", "description": "Path to activation handler script." },
-        "on_deactivate": { "type": "string", "description": "Path to deactivation handler script." },
-        "on_uninstall": { "type": "string", "description": "Path to uninstall handler (cleanup)." }
+        "on_install":    { "type": ["string", "null"], "description": "Runs once after install." },
+        "on_first_run":  { "type": ["string", "null"], "description": "Runs on first agent boot after install." },
+        "on_uninstall":  { "type": ["string", "null"], "description": "Runs before removal (cleanup)." },
+        "on_wake":       { "type": ["string", "null"], "description": "Runs each time the agent wakes (periodic heartbeat)." },
+        "on_verify":     { "type": ["string", "null"], "description": "Runs when a citizen triggers a verification event." },
+        "on_panic":      { "type": ["string", "null"], "description": "Runs when panic mode is activated (core-sensitive only)." },
+        "on_route_start":{ "type": ["string", "null"], "description": "Runs when worker starts a delivery route." },
+        "on_route_end":  { "type": ["string", "null"], "description": "Runs when worker ends a delivery route." },
+        "on_tier_change":{ "type": ["string", "null"], "description": "Runs when worker's reputation tier changes." }
       }
-    },
-    "skills_required": {
-      "type": "array",
-      "description": "Skills that MUST be installed for this skill to function.",
-      "items": { "type": "string", "pattern": "^skill-[a-z0-9][a-z0-9-]{2,40}(@.+)?$" },
-      "uniqueItems": true
-    },
-    "skills_optional": {
-      "type": "array",
-      "description": "Skills that ENHANCE this skill if also installed.",
-      "items": { "type": "string", "pattern": "^skill-[a-z0-9][a-z0-9-]{2,40}(@.+)?$" },
-      "uniqueItems": true
     },
     "ui": {
       "type": "object",
       "description": "User interface integration with the OpenBag Agent shell.",
       "additionalProperties": false,
       "properties": {
-        "has_widget": { "type": "boolean", "default": false, "description": "Skill provides a home-screen widget." },
-        "widget_size": {
-          "enum": ["compact", "medium", "full"],
-          "description": "Widget footprint. compact=1row, medium=2row, full=fullscreen."
-        },
-        "has_settings": { "type": "boolean", "default": false, "description": "Skill provides a settings panel." },
-        "icon": { "type": "string", "description": "Path to skill icon (SVG preferred, 256x256 PNG fallback)." },
-        "color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$", "description": "Skill accent color (hex)." }
+        "entry_point": { "type": "string", "description": "Relative path to UI entry (React Native component or Flutter widget)." },
+        "icon":        { "type": "string", "description": "Relative path to icon (SVG preferred, 256×256 PNG fallback)." },
+        "color":       { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$", "description": "Accent color hex." },
+        "widget":      { "type": "boolean", "default": false, "description": "Provides a home-screen widget." },
+        "widget_size": { "enum": ["compact", "medium", "full"], "description": "Widget height." },
+        "settings":    { "type": "boolean", "default": false, "description": "Provides a settings screen." }
       }
     },
     "i18n": {
       "type": "object",
-      "description": "Localized strings. Keys are BCP-47 language tags. Default 'pt-BR' if omitted.",
+      "description": "Localised display strings. Keys are BCP-47 language tags. Default pt-BR.",
       "patternProperties": {
         "^[a-z]{2}(-[A-Z]{2})?$": {
           "type": "object",
+          "additionalProperties": false,
           "properties": {
-            "display_name": { "type": "string" },
-            "description": { "type": "string" }
+            "display_name": { "type": "string", "maxLength": 60 },
+            "description":  { "type": "string", "maxLength": 600 }
           }
         }
       }
     },
-    "registry": {
-      "type": "object",
-      "description": "ClawHub-BR registry metadata.",
-      "additionalProperties": false,
-      "properties": {
-        "homepage": { "type": "string", "format": "uri" },
-        "repository": { "type": "string", "format": "uri" },
-        "issues": { "type": "string", "format": "uri" },
-        "audit_url": { "type": "string", "format": "uri", "description": "Link to public security audit (required for 'core' category)." }
-      }
+    "docs": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to full documentation (required for community skills)."
+    },
+    "repository": {
+      "type": "string",
+      "format": "uri",
+      "description": "Source repository URL."
+    },
+    "audit_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to public security audit. Required for core and core-sensitive skills."
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Human-readable name (max 60 chars). Shown in app UI. Falls back to name if absent.",
+      "maxLength": 60
     },
     "experimental": {
       "type": "boolean",
       "default": false,
-      "description": "Mark as experimental. Shows warning to users at install time."
+      "description": "Show experimental warning to user at install time."
     }
   }
 }
