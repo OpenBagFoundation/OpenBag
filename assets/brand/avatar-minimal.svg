@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="hex-mini" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#D87432"/>
+      <stop offset="100%" stop-color="#B8531F"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" fill="#F5EFE2"/>
+
+  <!-- Single bold hexagon -->
+  <polygon points="256,72 432,176 432,336 256,440 80,336 80,176"
+           fill="url(#hex-mini)"/>
+
+  <!-- Inner hexagon -->
+  <polygon points="256,160 360,220 360,292 256,352 152,292 152,220"
+           fill="#F5EFE2"/>
+
+  <!-- Center hexagon (smallest, solid) -->
+  <polygon points="256,200 320,236 320,276 256,312 192,276 192,236"
+           fill="#B8531F"/>
+</svg>
