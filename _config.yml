@@ -1,0 +1,82 @@
+title: OpenBag
+description: Open identity, agent, and civic reputation for last-mile delivery.
+baseurl: ""
+url: "https://openbagfoundation.github.io"
+repository: openbagfoundation/openbag
+
+theme: minima
+
+lang: pt-BR
+
+author:
+  name: OpenBag Foundation
+  email: tech@openbag.foundation
+
+markdown: kramdown
+highlighter: rouge
+
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-relative-links
+
+relative_links:
+  enabled: true
+  collections: true
+
+include:
+  - docs
+  - spec
+  - sdk
+  - apps
+  - tools
+  - coalition
+
+exclude:
+  - .github
+  - node_modules
+  - "*.png"
+  - "*.svg"
+  - Gemfile
+  - Gemfile.lock
+
+nav:
+  - title: Manifesto
+    url: /docs/MANIFESTO
+  - title: RFC-001 (PT)
+    url: /docs/RFC-001
+  - title: RFC-001 (EN)
+    url: /docs/RFC-001-en
+  - title: RFC-002 Cold Start
+    url: /docs/RFC-002
+  - title: Roadmap
+    url: /ROADMAP
+  - title: Arquitetura
+    url: /spec/01-architecture
+  - title: Agente
+    url: /spec/02-agent
+  - title: Skills
+    url: /spec/03-skills
+  - title: Sentinel
+    url: /spec/04-sentinel
+  - title: Reputação
+    url: /spec/05-reputation
+  - title: Academy
+    url: /spec/06-academy
+  - title: BLE Beacon
+    url: /spec/07-ble-beacon
+  - title: API Gov.br
+    url: /spec/api/README
+  - title: LGPD
+    url: /docs/LGPD-analysis
+  - title: Coalizão
+    url: /coalition/COALITION
+  - title: Governança
+    url: /GOVERNANCE
+  - title: Segurança
+    url: /SECURITY
