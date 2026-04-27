@@ -17,21 +17,26 @@ for the full catalogue and category definitions.
 
 ### Categories
 
-| Category       | Description                                                          |
-|----------------|----------------------------------------------------------------------|
-| `core`         | Built-in, pre-installed, maintained by Foundation TSC               |
-| `community`    | Published to ClawHub-BR by community contributors                   |
-| `experimental` | In active development; marked with a warning badge                  |
+| Category | Description |
+|----------|-------------|
+| `core` | Built-in, pre-installed, maintained by Foundation TSC |
+| `community` | Published to ClawHub-BR by community contributors |
+| `experimental` | In active development; marked with a warning badge |
 
 ### Lifecycle hooks
 
 A skill can implement any of these lifecycle hooks:
 
-| Hook           | When it fires                                        |
-|----------------|------------------------------------------------------|
-| `onInstall`    | Immediately after the skill is installed             |
-| `onUninstall`  | Before the skill is removed                         |
-| `onVerify`     | When a citizen triggers a verification event         |
+| Hook | When it fires |
+|------|---------------|
+| `on_install` | Immediately after the skill is installed |
+| `on_uninstall` | Before the skill is removed |
+| `on_verify` | When a citizen triggers a verification event |
+| `on_wake` | Each time the agent wakes (heartbeat) |
+| `on_route_start` | When a delivery route begins |
+| `on_route_end` | When a delivery route ends |
+| `on_tier_change` | When the worker's reputation tier changes |
+| `on_panic` | When panic mode is activated (core-sensitive only) |
 
 ## Building a Skill
 
@@ -48,6 +53,7 @@ generates a ready-to-edit directory:
 skill-example/
   SKILL.yaml        # manifest (source of truth)
   index.js          # skill entrypoint
+  scripts/          # lifecycle hook implementations
   test/
     index.js        # starter test
   README.md
@@ -61,9 +67,7 @@ Edit `index.js` and export the hook functions your skill needs:
 'use strict';
 
 module.exports = {
-  async onVerify(context) {
-    // context.emit('ble-broadcast', { payload: context.badge.id });
-  },
+  on_verify: require('./scripts/on_verify.js'),
 };
 ```
 
@@ -97,30 +101,28 @@ API token is on the roadmap.
 ## SKILL.yaml reference
 
 ```yaml
-apiVersion: openbag.org/v1alpha1
-kind: Skill
-metadata:
-  name: skill-example          # kebab-case, unique in the registry
-  version: 0.1.0               # semantic versioning
-  description: One-line summary
-  author: your-github-handle
-  category: community          # core | community | experimental
-  license: MIT
-spec:
-  permissions:                 # only request what you need
-    - ble-scan
-    - location
-  entrypoint: index.js         # relative to the skill directory
-  hooks:
-    onInstall: null            # set to a function name to override
-    onUninstall: null
-    onVerify: null
+name: skill-example
+version: 0.1.0
+license: MIT
+authors:
+  - Your Name <you@example.com>
+display_name: Example Skill
+description: A short description of what this skill does (20-600 chars).
+category: community
+maturity: alpha
+permissions:
+  - read:reputation_tier
+  - write:agent_inbox
+dependencies:
+  agent: '>= 0.5.0'
+hooks:
+  on_verify: scripts/on_verify.js
 ```
 
 ## Resources
 
 - [CLI Reference](./cli/README.md)
 - [Skill Catalogue spec](../spec/03-skills.md)
-- [Manifest JSON Schema](./skill-manifest.schema.json) _(generated — see schema source)_
-- [Contributing Guide](../CONTRIBUTING.md)
-- [ClawHub-BR Registry](https://github.com/openbag/clawhub-br)
+- [Agent Gateway spec](../spec/08-gateway.md)
+- [ClawHub-BR Registry spec](../spec/09-clawhub-br.md)
+- [Manifest JSON Schema](./skill-manifest.schema.json)
