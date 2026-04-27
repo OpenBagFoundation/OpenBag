@@ -10,18 +10,20 @@ This document lists the 100 highest-priority features derived from the OpenBag M
 
 Core infrastructure and silent launch prerequisites. Must ship before Phase α public reveal.
 
-| # | Feature | Pillar | Category | Effort |
-|---|---------|--------|----------|--------|
-| 1 | **Digital Seal v0** — QR-based worker verification, browser-only, CPF hashed client-side | Identity | Core | S |
-| 2 | **Verifica PWA** — citizen-facing mobile app to scan/verify worker seals | Identity | Core | S |
-| 3 | **Gov.br Seal API** — REST API: issue, verify, kill-switch, coverage | Identity | Core | M |
-| 4 | **OpenBag Agent skeleton** — React Native shell, local DB, plugin loader | Agent | Core | L |
-| 5 | **SKILL.yaml schema v1** — OpenClaw flat manifest format, AJV validation | Skills | Core | S |
-| 6 | **openbag CLI v1** — init, validate, test, publish, list, info commands | Skills | Core | S |
-| 7 | **Agent Gateway v0** — permission enforcer, event bus, storage API | Agent | Core | L |
-| 8 | **BLE Beacon spec** — 32-byte rotating hash payload, nRF52840 reference | Hardware | Core | M |
-| 9 | **Reputation engine v0** — tier calculation, event ingestion, score history | Reputation | Core | M |
-| 10 | **CI pipeline** — markdownlint + lychee + codespell on GitHub Actions | DevOps | Core | S |
+**Status: SHIPPED** (2026-04, this branch).
+
+| # | Feature | Pillar | Category | Effort | Status |
+|---|---------|--------|----------|--------|--------|
+| 1 | **Digital Seal v0** — QR-based worker verification, browser-only, CPF hashed client-side | Identity | Core | S | ✅ `tools/seal-v0/` |
+| 2 | **Verifica PWA** — citizen-facing mobile app to scan/verify worker seals | Identity | Core | S | ✅ `apps/verifica/` |
+| 3 | **Gov.br Seal API** — OpenAPI 3.1 spec: issue, verify, kill-switch, coverage | Identity | Core | M | ✅ `spec/api/govbr-seal.openapi.yaml` |
+| 4 | **OpenBag Agent spec** — local-first architecture, gateway, skill loader | Agent | Core | L | ✅ `spec/02-agent.md`, `spec/08-gateway.md` |
+| 5 | **SKILL.yaml schema v1** — OpenClaw flat manifest format, AJV validation | Skills | Core | S | ✅ `sdk/skill-manifest.schema.json` |
+| 6 | **openbag CLI v1** — init, validate, test, publish, list, info commands | Skills | Core | S | ✅ `sdk/cli/` |
+| 7 | **Agent Gateway spec** — permission enforcer, event bus, storage API | Agent | Core | L | ✅ `spec/08-gateway.md` |
+| 8 | **BLE Beacon spec** — 32-byte rotating hash payload, nRF52840 reference | Hardware | Core | M | ✅ `spec/07-ble-beacon.md` |
+| 9 | **LGPD compliance analysis** — full Art. 7/11/18 mapping, DPIA triggers, DPO | Governance | Core | M | ✅ `docs/LGPD-analysis.md` |
+| 10 | **CI pipeline** — markdownlint + lychee + codespell on GitHub Actions | DevOps | Core | S | ✅ `.github/workflows/ci.yml` |
 
 ---
 
@@ -29,18 +31,20 @@ Core infrastructure and silent launch prerequisites. Must ship before Phase α p
 
 Operational features for the first 500 workers in the Phase α polygon.
 
-| # | Feature | Pillar | Category | Effort |
-|---|---------|--------|----------|--------|
-| 11 | **Agent onboarding flow** — Gov.br OAuth login, DID generation, biometric binding | Identity | Core | M |
-| 12 | **NFC bag seal** — write worker DID + seal hash to NTAG216 sticker, verify on scan | Hardware | Core | M |
-| 13 | **BLE rotating beacon v1** — firmware for nRF52840, HMAC-SHA256 rotating hash | Hardware | Core | L |
-| 14 | **skill-rep v1** — reputation read/write skill, tier display in Agent UI | Reputation | Core | M |
-| 15 | **skill-verify v1** — citizen-triggered verification event handler | Identity | Core | S |
-| 16 | **Panic button** — hardware button → Agent event → SAMU/emergency contact SMS | Safety | Core-Sensitive | M |
-| 17 | **Coverage map** — geohash-based coverage visualization, seeded with α polygon | Infrastructure | Core | M |
-| 18 | **Platform affiliation** — iFood + Rappi first-party API key integration | Platforms | Core | M |
-| 19 | **Cold start dashboard** — ops dashboard: enrollment count, daily verifications, coverage | Ops | Core | M |
-| 20 | **Incident report flow** — anonymous citizen report → Sentinel + ops review | Safety | Core-Sensitive | M |
+**Status: 7 of 10 SHIPPED** (this branch). Remaining 3 are firmware/hardware-bound.
+
+| # | Feature | Pillar | Category | Effort | Status |
+|---|---------|--------|----------|--------|--------|
+| 11 | **Agent onboarding flow** — Gov.br OAuth, DID generation, biometric, hardware pairing | Identity | Core | M | ✅ `spec/11-onboarding.md` |
+| 12 | **NFC bag seal** — write worker DID + seal hash to NTAG216 sticker, verify on scan | Hardware | Core | M | hardware/firmware |
+| 13 | **BLE rotating beacon v1** — firmware for nRF52840, HMAC-SHA256 rotating hash | Hardware | Core | L | spec ✅ `spec/07-ble-beacon.md`; firmware pending |
+| 14 | **skill-rep v1** — reputation engine, Bronze/Prata/Ouro/Diamante tier calculation | Reputation | Core | M | ✅ `sdk/skills/skill-rep/` |
+| 15 | **skill-verify v1** — citizen-triggered verification event handler | Identity | Core | S | ✅ `sdk/skills/skill-verify/` |
+| 16 | **skill-sentinel v1** — anonymous incident reporting, mixnet-routed | Safety | Core-Sensitive | M | ✅ `sdk/skills/skill-sentinel/` |
+| 17 | **Coverage map** — geohash-based coverage visualization, seeded with α polygon | Infrastructure | Core | M | ✅ `apps/coverage/` |
+| 18 | **Platform integration guide** — iFood/Rappi/Keeta integration playbook | Platforms | Core | M | ✅ `docs/PLATFORM-INTEGRATION.md` |
+| 19 | **W3C VC examples** — JSON-LD context + worker-seal/affiliation/academy templates | Identity | Core | S | ✅ `spec/vc/` |
+| 20 | **ClawHub-BR registry seed** — `index.json` + 3 core skill entries | Skills | Core | S | ✅ `registry/` |
 
 ---
 

@@ -1,0 +1,65 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@protected": true,
+
+    "OpenBagWorkerSeal": {
+      "@id": "https://openbag.foundation/contexts/v1#OpenBagWorkerSeal",
+      "@context": {
+        "@version": 1.1,
+        "@protected": true,
+        "id": "@id",
+        "type": "@type",
+        "cpfHash":     "https://openbag.foundation/contexts/v1#cpfHash",
+        "sealCode":    "https://openbag.foundation/contexts/v1#sealCode",
+        "tier":        "https://openbag.foundation/contexts/v1#tier",
+        "status":      "https://openbag.foundation/contexts/v1#status",
+        "platforms":   "https://openbag.foundation/contexts/v1#platforms",
+        "issuedAt":    "https://openbag.foundation/contexts/v1#issuedAt",
+        "expiresAt":   "https://openbag.foundation/contexts/v1#expiresAt",
+        "maskedName":  "https://openbag.foundation/contexts/v1#maskedName"
+      }
+    },
+
+    "PlatformAffiliation": {
+      "@id": "https://openbag.foundation/contexts/v1#PlatformAffiliation",
+      "@context": {
+        "@version": 1.1,
+        "@protected": true,
+        "id": "@id",
+        "type": "@type",
+        "platform":     "https://openbag.foundation/contexts/v1#platform",
+        "affiliatedAt": "https://openbag.foundation/contexts/v1#affiliatedAt",
+        "platformId":   "https://openbag.foundation/contexts/v1#platformId"
+      }
+    },
+
+    "AcademyCompletion": {
+      "@id": "https://openbag.foundation/contexts/v1#AcademyCompletion",
+      "@context": {
+        "@version": 1.1,
+        "@protected": true,
+        "id": "@id",
+        "type": "@type",
+        "cohort":     "https://openbag.foundation/contexts/v1#cohort",
+        "completedAt":"https://openbag.foundation/contexts/v1#completedAt",
+        "modules":    "https://openbag.foundation/contexts/v1#modules",
+        "grade":      "https://openbag.foundation/contexts/v1#grade"
+      }
+    },
+
+    "ReputationAttestation": {
+      "@id": "https://openbag.foundation/contexts/v1#ReputationAttestation",
+      "@context": {
+        "@version": 1.1,
+        "@protected": true,
+        "id": "@id",
+        "type": "@type",
+        "tier":              "https://openbag.foundation/contexts/v1#tier",
+        "score":             "https://openbag.foundation/contexts/v1#score",
+        "upheldReports":     "https://openbag.foundation/contexts/v1#upheldReports",
+        "snapshotAt":        "https://openbag.foundation/contexts/v1#snapshotAt"
+      }
+    }
+  }
+}

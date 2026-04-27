@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mapa de cobertura OpenBag — Fase α — São Paulo. Atualizado a cada 5 minutos.">
+  <title>Cobertura OpenBag · Mapa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --amber-50:#fffbeb;--amber-100:#fef3c7;--amber-200:#fde68a;
+      --amber-400:#fbbf24;--amber-500:#f59e0b;--amber-600:#d97706;
+      --amber-700:#b45309;--amber-800:#92400e;
+      --green-500:#22c55e;--red-500:#ef4444;
+      --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;
+      --gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;
+      --gray-700:#374151;--gray-800:#1f2937;--gray-900:#111827;
+      --paper:#fdf8f0;--ink:#1a1209;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Geist', system-ui, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+    .wrapper { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; }
+
+    header {
+      text-align: center;
+      padding: 24px 0 28px;
+      border-bottom: 1px solid var(--amber-200);
+      margin-bottom: 24px;
+    }
+    header h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--amber-800);
+      margin-bottom: 6px;
+    }
+    header p { font-size: 14px; color: var(--gray-600); max-width: 540px; margin: 0 auto; line-height: 1.6; }
+    .badge { display: inline-block; margin-top: 10px; padding: 4px 12px; background: var(--amber-100); color: var(--amber-700); border-radius: 99px; font-size: 12px; font-weight: 600; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .stat-card { background: white; border: 1px solid var(--amber-200); border-radius: 14px; padding: 16px; }
+    .stat-label { font-size: 11px; font-weight: 600; color: var(--amber-700); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .stat-value { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; color: var(--gray-800); }
+    .stat-trend { font-size: 12px; color: var(--green-500); margin-top: 4px; }
+
+    .controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    .pill-group { display: inline-flex; gap: 4px; background: var(--gray-100); padding: 4px; border-radius: 99px; }
+    .pill {
+      padding: 6px 14px; border: none; background: none; border-radius: 99px;
+      font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; color: var(--gray-600); transition: all 0.15s;
+    }
+    .pill.active { background: white; color: var(--amber-800); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+    .search {
+      flex: 1; min-width: 200px;
+      padding: 10px 14px; border: 1.5px solid var(--gray-200); border-radius: 99px;
+      font-family: 'Geist', sans-serif; font-size: 14px; outline: none; transition: border-color 0.15s;
+    }
+    .search:focus { border-color: var(--amber-500); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .cell {
+      background: white; border: 1px solid var(--gray-200); border-radius: 12px;
+      padding: 14px 16px; cursor: pointer; transition: all 0.15s;
+    }
+    .cell:hover { border-color: var(--amber-400); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .cell-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .cell-name { font-weight: 600; color: var(--gray-800); font-size: 15px; }
+    .cell-geohash { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--gray-400); }
+    .cell-bar-wrap { height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+    .cell-bar { height: 100%; background: var(--amber-500); border-radius: 4px; transition: width 0.6s; }
+    .cell-bar.low { background: var(--red-500); }
+    .cell-bar.med { background: var(--amber-500); }
+    .cell-bar.high { background: var(--green-500); }
+    .cell-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--gray-500); }
+    .cell-pct { font-weight: 600; color: var(--gray-800); font-size: 14px; }
+    .cell-platforms { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+    .platform-mini { font-size: 10px; padding: 2px 6px; border-radius: 99px; font-weight: 600; }
+    .pm-ifood { background: #fee2e2; color: #dc2626; }
+    .pm-rappi { background: #fce7f3; color: #be185d; }
+    .pm-keeta { background: #ede9fe; color: #7c3aed; }
+    .pm-ubereats { background: #d1fae5; color: #065f46; }
+
+    .last-updated { text-align: right; font-size: 12px; color: var(--gray-400); margin-bottom: 12px; }
+
+    footer {
+      margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--gray-200);
+      font-size: 12px; color: var(--gray-500); text-align: center; line-height: 1.7;
+    }
+    footer a { color: var(--amber-700); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      header h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <h1>🗺️ Cobertura OpenBag</h1>
+    <p>Mapa público de cobertura por célula geohash-5 (~5 km). Dados anonimizados, atualizados a cada 5 minutos.</p>
+    <span class="badge">Fase α · Polígono Heliópolis-Sacomã + bairros vizinhos</span>
+  </header>
+
+  <div class="summary">
+    <div class="stat-card">
+      <div class="stat-label">Trabalhadores ativos</div>
+      <div class="stat-value" id="stat-workers">—</div>
+      <div class="stat-trend">↑ 12% últimos 7 dias</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Células cobertas</div>
+      <div class="stat-value" id="stat-cells">—</div>
+      <div class="stat-trend">de 24 no polígono</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Verificações hoje</div>
+      <div class="stat-value" id="stat-verifs">—</div>
+      <div class="stat-trend">↑ 8% vs ontem</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Cobertura média</div>
+      <div class="stat-value" id="stat-avg">—</div>
+      <div class="stat-trend">no polígono fundador</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="pill-group" id="platform-filter">
+      <button class="pill active" data-platform="ALL">Todas</button>
+      <button class="pill" data-platform="IFOOD">iFood</button>
+      <button class="pill" data-platform="RAPPI">Rappi</button>
+      <button class="pill" data-platform="KEETA">Keeta</button>
+      <button class="pill" data-platform="UBER_EATS">Uber Eats</button>
+    </div>
+    <input class="search" type="text" placeholder="Buscar bairro…" id="search">
+  </div>
+
+  <div class="last-updated" id="last-updated"></div>
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    Dados anônimos agregados, agrupados por célula geohash de precisão 5 (~5 km).<br>
+    Nenhuma localização individual de trabalhador é exposta.<br>
+    <a href="../../docs/MANIFESTO.md">Manifesto</a> ·
+    <a href="../../spec/api/govbr-seal.openapi.yaml">API</a> ·
+    <a href="../../docs/LGPD-analysis.md">LGPD</a> ·
+    <a href="../verifica/">App Verifica</a>
+  </footer>
+</div>
+
+<script>
+// Demo coverage data (Fase α). In production, fetched from /v0/selo/coverage.
+const COVERAGE = [
+  { geohash:'6gyf4', name:'Heliópolis-Sacomã', coverage_pct:87, active_workers:1247,
+    platforms:{IFOOD:92,RAPPI:68,KEETA:31,UBER_EATS:18} },
+  { geohash:'6gyf5', name:'Vila Prudente',     coverage_pct:61, active_workers:823,
+    platforms:{IFOOD:78,RAPPI:54,KEETA:22,UBER_EATS:12} },
+  { geohash:'6gyf6', name:'Moema',             coverage_pct:34, active_workers:412,
+    platforms:{IFOOD:41,RAPPI:22,KEETA:18,UBER_EATS:9} },
+  { geohash:'6gyf7', name:'Ipiranga',          coverage_pct:22, active_workers:267,
+    platforms:{IFOOD:28,RAPPI:14,KEETA:6,UBER_EATS:4} },
+  { geohash:'6gyf3', name:'Aclimação',         coverage_pct:54, active_workers:601,
+    platforms:{IFOOD:64,RAPPI:48,KEETA:19,UBER_EATS:11} },
+  { geohash:'6gyf8', name:'Cambuci',           coverage_pct:48, active_workers:520,
+    platforms:{IFOOD:55,RAPPI:42,KEETA:15,UBER_EATS:8} },
+  { geohash:'6gyf9', name:'Liberdade',         coverage_pct:41, active_workers:478,
+    platforms:{IFOOD:48,RAPPI:36,KEETA:14,UBER_EATS:7} },
+  { geohash:'6gyfb', name:'Bela Vista',        coverage_pct:38, active_workers:445,
+    platforms:{IFOOD:43,RAPPI:34,KEETA:12,UBER_EATS:6} },
+  { geohash:'6gyfc', name:'Brás',              coverage_pct:29, active_workers:332,
+    platforms:{IFOOD:35,RAPPI:24,KEETA:9,UBER_EATS:5} },
+  { geohash:'6gyfd', name:'Mooca',             coverage_pct:51, active_workers:589,
+    platforms:{IFOOD:58,RAPPI:46,KEETA:17,UBER_EATS:10} },
+  { geohash:'6gyfe', name:'Tatuapé',           coverage_pct:44, active_workers:498,
+    platforms:{IFOOD:51,RAPPI:38,KEETA:14,UBER_EATS:8} },
+  { geohash:'6gyff', name:'Belém',             coverage_pct:33, active_workers:368,
+    platforms:{IFOOD:38,RAPPI:28,KEETA:10,UBER_EATS:5} },
+];
+
+let activePlatform = 'ALL';
+let searchTerm = '';
+
+function classify(pct) { return pct >= 70 ? 'high' : pct >= 40 ? 'med' : 'low'; }
+
+function getPct(cell) {
+  if (activePlatform === 'ALL') return cell.coverage_pct;
+  return cell.platforms[activePlatform] || 0;
+}
+
+function render() {
+  const filtered = COVERAGE
+    .filter(c => !searchTerm || c.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => getPct(b) - getPct(a));
+
+  // Stats
+  const totalWorkers = COVERAGE.reduce((s, c) => s + c.active_workers, 0);
+  const avgCoverage = Math.round(
+    COVERAGE.reduce((s, c) => s + getPct(c), 0) / COVERAGE.length
+  );
+  document.getElementById('stat-workers').textContent = totalWorkers.toLocaleString('pt-BR');
+  document.getElementById('stat-cells').textContent = COVERAGE.length;
+  document.getElementById('stat-verifs').textContent = (totalWorkers * 6.4).toFixed(0);
+  document.getElementById('stat-avg').textContent = avgCoverage + '%';
+
+  // Grid
+  const grid = document.getElementById('grid');
+  grid.innerHTML = filtered.map(c => {
+    const pct = getPct(c);
+    const cls = classify(pct);
+    const badges = Object.entries(c.platforms)
+      .filter(([_, v]) => v > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4)
+      .map(([k, v]) => {
+        const key = k === 'UBER_EATS' ? 'ubereats' : k.toLowerCase();
+        return `<span class="platform-mini pm-${key}">${k.replace('_', ' ')} ${v}%</span>`;
+      }).join('');
+    return `
+      <div class="cell">
+        <div class="cell-header">
+          <div>
+            <div class="cell-name">${c.name}</div>
+            <div class="cell-geohash">${c.geohash}</div>
+          </div>
+          <div class="cell-pct">${pct}%</div>
+        </div>
+        <div class="cell-bar-wrap">
+          <div class="cell-bar ${cls}" style="width:${pct}%"></div>
+        </div>
+        <div class="cell-meta">
+          <span>${c.active_workers.toLocaleString('pt-BR')} ativos</span>
+          <span>${activePlatform === 'ALL' ? 'média geral' : activePlatform}</span>
+        </div>
+        <div class="cell-platforms">${badges}</div>
+      </div>`;
+  }).join('');
+
+  // Last updated
+  document.getElementById('last-updated').textContent =
+    'Atualizado às ' + new Date().toLocaleTimeString('pt-BR') + ' · TTL 5 min';
+}
+
+document.getElementById('platform-filter').addEventListener('click', (e) => {
+  if (e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#platform-filter .pill').forEach(p => p.classList.remove('active'));
+  e.target.classList.add('active');
+  activePlatform = e.target.dataset.platform;
+  render();
+});
+
+document.getElementById('search').addEventListener('input', (e) => {
+  searchTerm = e.target.value;
+  render();
+});
+
+render();
+</script>
+</body>
+</html>

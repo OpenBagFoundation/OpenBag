@@ -1,0 +1,25 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://openbag.foundation/contexts/v1"
+  ],
+  "id": "urn:uuid:0a6a5db1-6e7f-7i8a-2d9e-4f5a6b7c8d9e",
+  "type": ["VerifiableCredential", "ReputationAttestation"],
+  "issuer": "did:web:openbag.foundation",
+  "issuanceDate": "2026-04-26T14:00:00Z",
+  "expirationDate": "2026-07-26T14:00:00Z",
+  "credentialSubject": {
+    "id": "did:key:z6MkfooBarBazQuxFakeExampleKey1234567890abcdef",
+    "tier": "PRATA",
+    "score": 1842,
+    "upheldReports": 1,
+    "snapshotAt": "2026-04-26T14:00:00Z"
+  },
+  "proof": {
+    "type": "Ed25519Signature2020",
+    "created": "2026-04-26T14:00:00Z",
+    "verificationMethod": "did:web:openbag.foundation#key-2026-04",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z7pQ9jLEXAMPLE_REPUTATION_SIGNATURE_BASE58_BTC_PLACEHOLDER_FOR_DOCS_ONLY"
+  }
+}

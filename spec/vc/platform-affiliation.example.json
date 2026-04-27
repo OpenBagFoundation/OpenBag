@@ -1,0 +1,24 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://openbag.foundation/contexts/v1"
+  ],
+  "id": "urn:uuid:8e4e3b9f-4c5d-5g6e-0b7c-2d3e4f5a6b7c",
+  "type": ["VerifiableCredential", "PlatformAffiliation"],
+  "issuer": "did:web:api.ifood.com.br",
+  "issuanceDate": "2026-04-02T08:30:00Z",
+  "expirationDate": "2026-10-02T08:30:00Z",
+  "credentialSubject": {
+    "id": "did:key:z6MkfooBarBazQuxFakeExampleKey1234567890abcdef",
+    "platform": "IFOOD",
+    "platformId": "ifood-courier-1234567",
+    "affiliatedAt": "2025-08-15T00:00:00Z"
+  },
+  "proof": {
+    "type": "Ed25519Signature2020",
+    "created": "2026-04-02T08:30:00Z",
+    "verificationMethod": "did:web:api.ifood.com.br#key-1",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z5kT7gHEXAMPLE_PLATFORM_SIGNATURE_BASE58_BTC_PLACEHOLDER_FOR_DOCS_ONLY"
+  }
+}

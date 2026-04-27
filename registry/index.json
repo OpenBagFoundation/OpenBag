@@ -1,0 +1,80 @@
+{
+  "schema_version": "1",
+  "generated_at": "2026-04-26T19:45:00-03:00",
+  "registry_url": "https://github.com/openbagfoundation/clawhub-br",
+  "skills": [
+    {
+      "name": "skill-verify",
+      "display_name": "Verificação Cidadã",
+      "version": "1.0.0",
+      "category": "core",
+      "maturity": "stable",
+      "license": "MIT",
+      "description": "Core verification handler. Responds to citizen verification events triggered via QR scan, NFC tap, or BLE proximity. Returns the worker's current seal status, tier, masked name, and platform affiliations.",
+      "authors": ["OpenBag Foundation <tech@openbag.foundation>"],
+      "trust_tier": "foundation",
+      "checksum": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "published_at": "2026-04-26T00:00:00-03:00",
+      "docs": "https://github.com/openbagfoundation/clawhub-br/tree/main/registry/skill-verify",
+      "audit_url": "https://transparency.openbag.foundation/audits/skill-verify-v1",
+      "permissions": [
+        "read:reputation_tier",
+        "read:platform_list",
+        "read:status_current",
+        "ble:advertise",
+        "nfc:read",
+        "notifications:local",
+        "storage:encrypted_local"
+      ],
+      "hooks": ["on_install", "on_first_run", "on_verify", "on_wake"]
+    },
+    {
+      "name": "skill-rep",
+      "display_name": "Reputação Cívica",
+      "version": "1.0.0",
+      "category": "core",
+      "maturity": "stable",
+      "license": "MIT",
+      "description": "Civic reputation engine. Aggregates platform events, calculates Bronze/Prata/Ouro/Diamante tier, and exposes the current tier to other skills via read:reputation_tier. Tier transitions emit on_tier_change.",
+      "authors": ["OpenBag Foundation <tech@openbag.foundation>"],
+      "trust_tier": "foundation",
+      "checksum": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "published_at": "2026-04-26T00:00:00-03:00",
+      "docs": "https://github.com/openbagfoundation/clawhub-br/tree/main/registry/skill-rep",
+      "audit_url": "https://transparency.openbag.foundation/audits/skill-rep-v1",
+      "permissions": [
+        "read:reputation_tier",
+        "read:platform_list",
+        "read:status_current",
+        "write:reputation_event",
+        "storage:encrypted_local",
+        "notifications:local"
+      ],
+      "hooks": ["on_install", "on_first_run", "on_wake", "on_tier_change"]
+    },
+    {
+      "name": "skill-sentinel",
+      "display_name": "Sentinel — Relato Anônimo",
+      "version": "1.0.0",
+      "category": "core-sensitive",
+      "maturity": "beta",
+      "license": "MIT",
+      "description": "Anonymous incident reporting skill. Encrypts the report client-side, routes through the Foundation mixnet, and never logs the reporter's identity. Used to flag suspicious bags, hostility against legitimate workers, or fraudulent verifications.",
+      "authors": ["OpenBag Foundation <tech@openbag.foundation>"],
+      "trust_tier": "foundation",
+      "checksum": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "published_at": "2026-04-26T00:00:00-03:00",
+      "docs": "https://github.com/openbagfoundation/clawhub-br/tree/main/registry/skill-sentinel",
+      "audit_url": "https://transparency.openbag.foundation/audits/skill-sentinel-v1",
+      "permissions": [
+        "read:status_current",
+        "write:agent_inbox",
+        "location:geohash7",
+        "notifications:local",
+        "storage:encrypted_local",
+        "http:sentinel.openbag.foundation/v0/reports"
+      ],
+      "hooks": ["on_install", "on_verify"]
+    }
+  ]
+}
