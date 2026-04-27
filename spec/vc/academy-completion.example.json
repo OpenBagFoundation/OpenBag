@@ -1,0 +1,32 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://openbag.foundation/contexts/v1"
+  ],
+  "id": "urn:uuid:9f5f4ca0-5d6e-6h7f-1c8d-3e4f5a6b7c8d",
+  "type": ["VerifiableCredential", "AcademyCompletion"],
+  "issuer": "did:web:openbag.foundation",
+  "issuanceDate": "2026-04-15T18:00:00Z",
+  "credentialSubject": {
+    "id": "did:key:z6MkfooBarBazQuxFakeExampleKey1234567890abcdef",
+    "cohort": "openbag-academy/2026-04/heliopolis/042",
+    "completedAt": "2026-04-15T18:00:00Z",
+    "modules": [
+      "defensive-driving",
+      "customer-service",
+      "mei-registration",
+      "lgpd-fundamentals",
+      "occupational-health",
+      "active-citizenship",
+      "openbag-practicals"
+    ],
+    "grade": "approved"
+  },
+  "proof": {
+    "type": "Ed25519Signature2020",
+    "created": "2026-04-15T18:00:00Z",
+    "verificationMethod": "did:web:openbag.foundation#key-2026-04",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z6mN4hKEXAMPLE_ACADEMY_SIGNATURE_BASE58_BTC_PLACEHOLDER_FOR_DOCS_ONLY"
+  }
+}

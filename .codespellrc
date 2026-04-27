@@ -1,3 +1,4 @@
 [codespell]
-skip = *.svg,*.png,*.html
-ignore-words-list = ser,sinal,saem,vai,momento,foto,vetor,anual,fases,fase,falso,tese,mede,repete,te,inicial,itesm,vetores,inicial,crachá
+skip = *.svg,*.png,*.html,*.json,*.yaml,*.yml,*.lock,*.min.js,.git
+ignore-words-list = ser,sinal,saem,vai,momento,foto,vetor,anual,fases,fase,falso,tese,mede,repete,te,inicial,itesm,vetores,crach,crachá,nao,seu,sua,os,as,ois,fim,tao,em,ja,esta,este,des,pra,pro,com,sem,por,sob,ans,ist,ot,vista,pano,tens,ente
+quiet-level = 2

@@ -30,13 +30,14 @@ A skill can implement any of these lifecycle hooks:
 | Hook | When it fires |
 |------|---------------|
 | `on_install` | Immediately after the skill is installed |
+| `on_first_run` | First agent boot after install (onboarding) |
 | `on_uninstall` | Before the skill is removed |
+| `on_wake` | Each time the agent wakes (periodic heartbeat) |
 | `on_verify` | When a citizen triggers a verification event |
-| `on_wake` | Each time the agent wakes (heartbeat) |
-| `on_route_start` | When a delivery route begins |
-| `on_route_end` | When a delivery route ends |
-| `on_tier_change` | When the worker's reputation tier changes |
 | `on_panic` | When panic mode is activated (core-sensitive only) |
+| `on_route_start` | When worker starts a delivery route |
+| `on_route_end` | When worker ends a delivery route |
+| `on_tier_change` | When worker reputation tier changes |
 
 ## Building a Skill
 
@@ -101,21 +102,23 @@ API token is on the roadmap.
 ## SKILL.yaml reference
 
 ```yaml
-name: skill-example
-version: 0.1.0
-license: MIT
+name: skill-example            # kebab-case, must start with "skill-"
+version: 0.1.0                 # semver
+license: MIT                   # SPDX identifier
 authors:
   - Your Name <you@example.com>
 display_name: Example Skill
-description: A short description of what this skill does (20-600 chars).
-category: community
-maturity: alpha
-permissions:
+description: One-to-three sentence summary shown in ClawHub-BR.
+category: community            # core | community | experimental
+maturity: alpha                # alpha | beta | stable
+permissions:                   # only request what you need
   - read:reputation_tier
-  - write:agent_inbox
+  - ble:scan
+  - notifications:local
 dependencies:
-  agent: '>= 0.5.0'
+  agent: ">= 0.5.0"
 hooks:
+  on_install: scripts/on_install.js
   on_verify: scripts/on_verify.js
 ```
 
@@ -126,3 +129,5 @@ hooks:
 - [Agent Gateway spec](../spec/08-gateway.md)
 - [ClawHub-BR Registry spec](../spec/09-clawhub-br.md)
 - [Manifest JSON Schema](./skill-manifest.schema.json)
+- [Contributing Guide](../CONTRIBUTING.md)
+- [ClawHub-BR Registry](https://github.com/openbagfoundation/clawhub-br)

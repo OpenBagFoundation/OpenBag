@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selo Digital v0 · OpenBag</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --amber-50:#fffbeb;--amber-100:#fef3c7;--amber-200:#fde68a;
+      --amber-600:#d97706;--amber-700:#b45309;--amber-800:#92400e;
+      --green-50:#f0fdf4;--green-500:#22c55e;--green-600:#16a34a;
+      --red-50:#fef2f2;--red-500:#ef4444;--red-600:#dc2626;
+      --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;
+      --gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;
+      --gray-700:#374151;--gray-800:#1f2937;
+      --paper:#fdf8f0;--ink:#1a1209;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Geist',system-ui,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh}
+    .wrapper{max-width:760px;margin:0 auto;padding:24px 20px 60px}
+
+    /* Header */
+    header{text-align:center;padding:32px 0 28px;border-bottom:1px solid var(--amber-200);margin-bottom:32px}
+    header h1{font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:var(--amber-800);margin-bottom:6px}
+    header p{font-size:15px;color:var(--gray-600);max-width:500px;margin:0 auto;line-height:1.6}
+    .version-badge{display:inline-block;margin-top:10px;padding:4px 12px;background:var(--amber-100);color:var(--amber-700);border-radius:99px;font-size:12px;font-weight:600}
+
+    /* Tabs */
+    .tabs{display:flex;gap:4px;background:var(--gray-100);border-radius:12px;padding:4px;margin-bottom:28px}
+    .tab{flex:1;padding:10px;border:none;background:none;border-radius:8px;font-family:'Geist',sans-serif;font-size:14px;font-weight:500;cursor:pointer;color:var(--gray-600);transition:all .15s}
+    .tab.active{background:white;color:var(--amber-800);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+    /* Panel */
+    .panel{display:none}.panel.active{display:block}
+
+    /* Form */
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:540px){.form-grid{grid-template-columns:1fr}}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .field.full{grid-column:1/-1}
+    label{font-size:13px;font-weight:500;color:var(--gray-600)}
+    input,select{padding:11px 14px;border:1.5px solid var(--gray-200);border-radius:10px;font-family:'Geist',sans-serif;font-size:14px;color:var(--gray-800);background:white;outline:none;transition:border-color .15s;width:100%}
+    input:focus,select:focus{border-color:var(--amber-600)}
+    input[type="password"]{letter-spacing:2px}
+    .cpf-note{font-size:11px;color:var(--gray-400);line-height:1.4}
+    .btn{padding:14px 24px;border:none;border-radius:10px;font-family:'Geist',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:8px}
+    .btn-primary{background:var(--amber-700);color:white;width:100%;justify-content:center;margin-top:8px}
+    .btn-primary:hover{background:var(--amber-800)}
+    .btn-outline{background:white;color:var(--amber-700);border:2px solid var(--amber-200)}
+    .btn-outline:hover{background:var(--amber-50)}
+
+    /* Privacy notice */
+    .privacy-box{background:var(--amber-50);border:1px solid var(--amber-200);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--amber-800);line-height:1.6;margin-bottom:20px}
+    .privacy-box strong{font-weight:600}
+
+    /* Result card */
+    .result-card{background:white;border:2px solid var(--green-500);border-radius:16px;padding:28px;margin-top:28px;display:none}
+    .result-card.visible{display:block}
+    .rc-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+    .rc-icon{font-size:36px}
+    .rc-title{font-family:'Fraunces',serif;font-size:20px;color:var(--green-600);font-weight:700}
+    .rc-sub{font-size:13px;color:var(--gray-500)}
+    .seal-display{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px;padding:16px;text-align:center;margin-bottom:20px}
+    .seal-code{font-family:'Geist Mono',monospace;font-size:22px;font-weight:500;color:var(--amber-800);letter-spacing:2px;margin-bottom:4px}
+    .seal-meta{font-size:12px;color:var(--gray-500)}
+    .qr-section{display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:20px}
+    #qrcode{padding:12px;background:white;border-radius:8px;display:inline-block;border:1px solid var(--gray-200)}
+    .rc-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .expiry-badge{display:inline-block;padding:4px 12px;background:var(--green-50);color:var(--green-600);border-radius:99px;font-size:12px;font-weight:600;border:1px solid var(--green-500)}
+
+    /* Verify panel */
+    .verify-input-wrap{position:relative}
+    .verify-input{font-family:'Geist Mono',monospace;font-size:18px;letter-spacing:3px;text-align:center;text-transform:uppercase}
+    .verify-result{margin-top:24px}
+    .vr-valid{background:var(--green-50);border:2px solid var(--green-500);border-radius:14px;padding:24px}
+    .vr-invalid{background:var(--red-50);border:2px solid var(--red-500);border-radius:14px;padding:24px}
+    .vr-title{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:12px}
+    .vr-valid .vr-title{color:var(--green-600)}
+    .vr-invalid .vr-title{color:var(--red-600)}
+    .vr-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06);font-size:14px}
+    .vr-row:last-child{border:none}
+    .vr-key{color:var(--gray-500)}
+    .vr-val{font-weight:600;color:var(--gray-800)}
+    .status-pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
+    .pill-ativo{background:#d1fae5;color:#065f46}
+    .pill-suspenso{background:#fef9c3;color:#854d0e}
+    .pill-expirado{background:#fee2e2;color:#991b1b}
+
+    /* Issued list */
+    .issued-list{margin-top:24px}
+    .il-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .il-title{font-size:14px;font-weight:600;color:var(--gray-700)}
+    .il-count{font-size:12px;color:var(--gray-400)}
+    .il-empty{text-align:center;padding:32px;color:var(--gray-400);font-size:14px}
+    .seal-item{background:white;border:1px solid var(--gray-200);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:border-color .15s}
+    .seal-item:hover{border-color:var(--amber-400)}
+    .si-code{font-family:'Geist Mono',monospace;font-size:13px;color:var(--amber-800);font-weight:500}
+    .si-name{font-size:12px;color:var(--gray-500);margin-top:2px}
+    .si-right{text-align:right}
+    .si-status{font-size:11px;font-weight:600}
+    .si-exp{font-size:11px;color:var(--gray-400)}
+    .clear-btn{font-size:12px;color:var(--red-500);background:none;border:none;cursor:pointer;padding:4px 8px}
+    .clear-btn:hover{text-decoration:underline}
+
+    footer{text-align:center;padding:32px 0 0;font-size:12px;color:var(--gray-400);line-height:1.8}
+    footer a{color:var(--amber-700);text-decoration:none}
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <h1>🐝 Selo Digital v0</h1>
+    <p>Ferramenta para coordenadores de campo emitir e verificar Selos Digitais OpenBag sem hardware físico.</p>
+    <span class="version-badge">v0 · Fase α · Heliópolis-Sacomã</span>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('issue', this)">📋 Emitir Selo</button>
+    <button class="tab" onclick="switchTab('verify', this)">🔍 Verificar Selo</button>
+    <button class="tab" onclick="switchTab('list', this)">📂 Emitidos</button>
+  </div>
+
+  <!-- ISSUE PANEL -->
+  <div id="panel-issue" class="panel active">
+    <div class="privacy-box">
+      🔒 <strong>CPF nunca sai deste dispositivo.</strong> Todos os dados são armazenados localmente no seu navegador (localStorage). Nenhuma informação é enviada a servidores externos.
+    </div>
+
+    <form id="issue-form" onsubmit="issueSeal(event)">
+      <div class="form-grid">
+        <div class="field">
+          <label>CPF do entregador</label>
+          <input type="password" id="f-cpf" placeholder="000.000.000-00"
+                 maxlength="14" oninput="maskCPF(this)" autocomplete="off" required>
+          <span class="cpf-note">Armazenado apenas como hash. Nunca exibido em texto puro.</span>
+        </div>
+        <div class="field">
+          <label>Nome completo</label>
+          <input type="text" id="f-name" placeholder="Nome Sobrenome" required>
+        </div>
+        <div class="field">
+          <label>Plataforma principal</label>
+          <select id="f-platform" required>
+            <option value="">Selecione…</option>
+            <option value="IFOOD">iFood</option>
+            <option value="RAPPI">Rappi</option>
+            <option value="KEETA">Keeta</option>
+            <option value="UBER_EATS">Uber Eats</option>
+            <option value="MERCADO_LIVRE">Mercado Livre</option>
+            <option value="OUTROS">Outros</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Turma Academy (opcional)</label>
+          <input type="text" id="f-academy" placeholder="ex: heliopolis-2026-04-t1">
+        </div>
+        <div class="field">
+          <label>Data de emissão</label>
+          <input type="date" id="f-issued" required>
+        </div>
+        <div class="field">
+          <label>Validade (30 dias)</label>
+          <input type="date" id="f-expiry" readonly style="background:var(--gray-50)">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <span>✨</span> Gerar Selo Digital
+      </button>
+    </form>
+
+    <!-- Result -->
+    <div class="result-card" id="result-card">
+      <div class="rc-header">
+        <div class="rc-icon">✅</div>
+        <div>
+          <div class="rc-title">Selo emitido com sucesso</div>
+          <div class="rc-sub" id="rc-name-display"></div>
+        </div>
+      </div>
+      <div class="seal-display">
+        <div class="seal-code" id="rc-code"></div>
+        <div class="seal-meta" id="rc-meta"></div>
+      </div>
+      <div class="qr-section">
+        <div id="qrcode"></div>
+        <span id="rc-expiry-badge" class="expiry-badge"></span>
+      </div>
+      <div class="rc-actions">
+        <button class="btn btn-outline" onclick="downloadQR()">⬇️ Baixar QR</button>
+        <button class="btn btn-outline" onclick="copyCode()">📋 Copiar código</button>
+        <button class="btn btn-outline" onclick="printSeal()">🖨️ Imprimir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFY PANEL -->
+  <div id="panel-verify" class="panel">
+    <div class="field" style="margin-bottom:16px">
+      <label>Código do Selo OpenBag</label>
+      <input type="text" class="verify-input" id="verify-input"
+             placeholder="OBAG-XXXXXX-XXXX-XX"
+             maxlength="20" oninput="formatVerifyCode(this)"
+             onkeydown="if(event.key==='Enter')verifySeal()">
+    </div>
+    <button class="btn btn-primary" onclick="verifySeal()">
+      <span>🔍</span> Verificar Selo
+    </button>
+    <div class="verify-result" id="verify-result"></div>
+  </div>
+
+  <!-- LIST PANEL -->
+  <div id="panel-list" class="panel">
+    <div class="issued-list">
+      <div class="il-header">
+        <span class="il-title">Selos emitidos neste dispositivo</span>
+        <button class="clear-btn" onclick="clearAll()">🗑️ Limpar todos</button>
+      </div>
+      <div id="list-content"></div>
+    </div>
+  </div>
+
+  <footer>
+    Ferramenta de campo OpenBag · Fase α · Polígono Heliópolis-Sacomã<br>
+    <a href="../../docs/MANIFESTO.md">Manifesto</a> ·
+    <a href="../../docs/RFC-002.md">RFC-002 Cold Start</a> ·
+    <a href="https://github.com/openbagfoundation/openbag">GitHub</a><br>
+    Dados locais apenas · Sem conexão com servidores externos
+  </footer>
+</div>
+
+<script>
+// ─── Init ───────────────────────────────────────────────
+(function initDates() {
+  const today = new Date();
+  const expiry = new Date(today);
+  expiry.setDate(expiry.getDate() + 30);
+  document.getElementById('f-issued').value = fmt(today);
+  document.getElementById('f-expiry').value = fmt(expiry);
+  document.getElementById('f-issued').addEventListener('change', function() {
+    const d = new Date(this.value + 'T12:00:00');
+    d.setDate(d.getDate() + 30);
+    document.getElementById('f-expiry').value = fmt(d);
+  });
+})();
+
+function fmt(d) {
+  return d.toISOString().slice(0,10);
+}
+
+// ─── Tab ────────────────────────────────────────────────
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-' + id).classList.add('active');
+  if (id === 'list') renderList();
+}
+
+// ─── CPF masking ────────────────────────────────────────
+function maskCPF(input) {
+  let v = input.value.replace(/\D/g,'').slice(0,11);
+  if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/,'$1.$2.$3-$4');
+  else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/,'$1.$2.$3');
+  else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/,'$1.$2');
+  input.value = v;
+}
+
+function formatVerifyCode(input) {
+  let v = input.value.replace(/[^A-Z0-9a-z]/gi,'').toUpperCase().slice(0,16);
+  let out = '';
+  for (let i = 0; i < v.length; i++) {
+    if (i === 4 || i === 10 || i === 14) out += '-';
+    out += v[i];
+  }
+  input.value = out;
+}
+
+// ─── Crypto helpers ─────────────────────────────────────
+async function sha256hex(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function b36(n, len) {
+  return n.toString(36).toUpperCase().padStart(len,'0').slice(-len);
+}
+
+async function generateSealCode(cpfRaw, platform, issuedDate) {
+  const salt = 'openbag-seal-v0-br';
+  const hash = await sha256hex(cpfRaw.replace(/\D/g,'') + salt + platform + issuedDate);
+  const seg1 = hash.slice(0,6).toUpperCase();
+  const seg2 = hash.slice(6,10).toUpperCase();
+  const seg3 = hash.slice(10,12).toUpperCase();
+  return `OBAG-${seg1}-${seg2}-${seg3}`;
+}
+
+async function hashCPF(cpfRaw) {
+  return (await sha256hex(cpfRaw.replace(/\D/g,'') + 'openbag-storage-salt')).slice(0,16);
+}
+
+// ─── Issue ──────────────────────────────────────────────
+let lastCode = '';
+
+async function issueSeal(e) {
+  e.preventDefault();
+  const cpf = document.getElementById('f-cpf').value;
+  const name = document.getElementById('f-name').value.trim();
+  const platform = document.getElementById('f-platform').value;
+  const academy = document.getElementById('f-academy').value.trim();
+  const issued = document.getElementById('f-issued').value;
+  const expiry = document.getElementById('f-expiry').value;
+
+  const code = await generateSealCode(cpf, platform, issued);
+  const cpfHash = await hashCPF(cpf);
+  lastCode = code;
+
+  // Store in localStorage (no raw CPF)
+  const record = { code, name, platform, academy, issued, expiry, cpfHash, tier:'BRONZE', status:'ATIVO' };
+  const all = getAll();
+  all[code] = record;
+  localStorage.setItem('openbag_seals_v0', JSON.stringify(all));
+
+  // Show result
+  const card = document.getElementById('result-card');
+  document.getElementById('rc-code').textContent = code;
+  document.getElementById('rc-name-display').textContent = maskName(name) + ' · ' + platform;
+  document.getElementById('rc-meta').textContent = 'Emitido: ' + issued + ' · Válido até: ' + expiry;
+  document.getElementById('rc-expiry-badge').textContent = '✅ Válido até ' + new Date(expiry+'T12:00:00').toLocaleDateString('pt-BR');
+  card.classList.add('visible');
+
+  // QR code
+  document.getElementById('qrcode').innerHTML = '';
+  new QRCode(document.getElementById('qrcode'), {
+    text: code,
+    width: 200,
+    height: 200,
+    colorDark: '#1a1209',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H,
+  });
+
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function maskName(name) {
+  const parts = name.trim().split(' ');
+  return parts.map((p, i) => i === 0 ? p[0] + '***' : p[0] + '***').join(' ');
+}
+
+// ─── Verify ─────────────────────────────────────────────
+function verifySeal() {
+  const code = document.getElementById('verify-input').value.trim().toUpperCase();
+  const all = getAll();
+  const el = document.getElementById('verify-result');
+
+  if (!code || !/^OBAG-[A-Z0-9]{6}-[A-Z0-9]{4}-[A-Z0-9]{2}$/.test(code)) {
+    el.innerHTML = `<div class="vr-invalid"><div class="vr-title">❌ Código inválido</div><p style="font-size:14px;color:var(--gray-500)">Formato esperado: OBAG-XXXXXX-XXXX-XX</p></div>`;
+    return;
+  }
+
+  const r = all[code];
+  if (!r) {
+    el.innerHTML = `<div class="vr-invalid">
+      <div class="vr-title">⬜ Não encontrado</div>
+      <p style="font-size:14px;color:var(--gray-600);line-height:1.6">Código não está no registro local deste dispositivo.<br>
+      <strong>Nota:</strong> ausência não é prova de fraude durante a Fase α.</p>
+    </div>`;
+    return;
+  }
+
+  const today = new Date().toISOString().slice(0,10);
+  const expired = r.expiry < today;
+  const statusClass = expired ? 'expirado' : r.status === 'ATIVO' ? 'ativo' : 'suspenso';
+  const statusLabel = expired ? '⚠️ EXPIRADO' : r.status === 'ATIVO' ? '✅ ATIVO' : '⚠️ SUSPENSO';
+
+  el.innerHTML = `<div class="${expired ? 'vr-invalid' : 'vr-valid'}">
+    <div class="vr-title">${expired ? '⚠️ Selo expirado' : '✅ Selo válido'}</div>
+    <div class="vr-row"><span class="vr-key">Nome (mascarado)</span><span class="vr-val">${maskName(r.name)}</span></div>
+    <div class="vr-row"><span class="vr-key">Plataforma</span><span class="vr-val">${r.platform}</span></div>
+    <div class="vr-row"><span class="vr-key">Status</span><span class="vr-val"><span class="status-pill pill-${statusClass}">${statusLabel}</span></span></div>
+    <div class="vr-row"><span class="vr-key">Emitido</span><span class="vr-val">${r.issued}</span></div>
+    <div class="vr-row"><span class="vr-key">Validade</span><span class="vr-val">${r.expiry}</span></div>
+    <div class="vr-row"><span class="vr-key">Tier</span><span class="vr-val">🥉 ${r.tier}</span></div>
+    ${r.academy ? `<div class="vr-row"><span class="vr-key">Turma Academy</span><span class="vr-val">${r.academy}</span></div>` : ''}
+    <div class="vr-row" style="font-size:11px;color:var(--gray-400)"><span class="vr-key">Código</span><span class="vr-val" style="font-family:monospace">${code}</span></div>
+  </div>`;
+}
+
+// ─── List ────────────────────────────────────────────────
+function getAll() {
+  try { return JSON.parse(localStorage.getItem('openbag_seals_v0') || '{}'); }
+  catch { return {}; }
+}
+
+function renderList() {
+  const all = getAll();
+  const keys = Object.keys(all);
+  const el = document.getElementById('list-content');
+  if (keys.length === 0) {
+    el.innerHTML = '<div class="il-empty">Nenhum selo emitido neste dispositivo ainda.</div>';
+    return;
+  }
+  document.querySelector('.il-count').textContent = `${keys.length} selo${keys.length > 1 ? 's' : ''}`;
+  const today = new Date().toISOString().slice(0,10);
+  el.innerHTML = keys.sort((a,b) => all[b].issued.localeCompare(all[a].issued)).map(code => {
+    const r = all[code];
+    const expired = r.expiry < today;
+    return `<div class="seal-item" onclick="prefillVerify('${code}')">
+      <div>
+        <div class="si-code">${code}</div>
+        <div class="si-name">${maskName(r.name)} · ${r.platform}</div>
+      </div>
+      <div class="si-right">
+        <div class="si-status" style="color:${expired ? 'var(--red-500)' : 'var(--green-600)'}">${expired ? '⚠️ Expirado' : '✅ Ativo'}</div>
+        <div class="si-exp">val. ${r.expiry}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function prefillVerify(code) {
+  switchTab('verify', document.querySelectorAll('.tab')[1]);
+  document.getElementById('verify-input').value = code;
+  verifySeal();
+}
+
+function clearAll() {
+  if (confirm('Apagar todos os selos deste dispositivo? Esta ação não pode ser desfeita.')) {
+    localStorage.removeItem('openbag_seals_v0');
+    renderList();
+  }
+}
+
+// ─── Actions ─────────────────────────────────────────────
+function copyCode() {
+  navigator.clipboard.writeText(lastCode).then(() => alert('Código copiado: ' + lastCode));
+}
+
+function downloadQR() {
+  const canvas = document.querySelector('#qrcode canvas');
+  if (!canvas) { alert('QR Code não gerado ainda.'); return; }
+  const a = document.createElement('a');
+  a.download = lastCode + '.png';
+  a.href = canvas.toDataURL();
+  a.click();
+}
+
+function printSeal() {
+  const code = lastCode;
+  const card = document.getElementById('result-card');
+  const canvas = document.querySelector('#qrcode canvas');
+  const qrImg = canvas ? canvas.toDataURL() : '';
+  const win = window.open('','_blank','width=400,height=600');
+  win.document.write(`<!DOCTYPE html><html><head><title>Selo ${code}</title>
+  <style>body{font-family:sans-serif;text-align:center;padding:32px}
+  .code{font-family:monospace;font-size:20px;letter-spacing:2px;margin:16px 0;font-weight:bold}
+  .logo{font-size:28px;margin-bottom:8px}
+  h1{font-size:18px;margin-bottom:4px}
+  .note{font-size:11px;color:#666;margin-top:16px;line-height:1.5}
+  img{border:1px solid #ddd;border-radius:8px;padding:8px}
+  </style></head><body>
+  <div class="logo">🐝</div>
+  <h1>OpenBag Selo Digital v0</h1>
+  <img src="${qrImg}" width="180" height="180">
+  <div class="code">${code}</div>
+  <div class="note">Fase α · Piloto Heliópolis-Sacomã<br>Verifique: openbag.foundation/verifica</div>
+  <script>window.onload=()=>{window.print();window.close()}<\/script>
+  </body></html>`);
+}
+</script>
+</body>
+</html>

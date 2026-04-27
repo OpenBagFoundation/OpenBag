@@ -1,0 +1,34 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://openbag.foundation/contexts/v1"
+  ],
+  "id": "urn:uuid:7d3d2a8e-3b4c-4f5d-9a6b-1c2d3e4f5a6b",
+  "type": ["VerifiableCredential", "OpenBagWorkerSeal"],
+  "issuer": "did:web:openbag.foundation",
+  "issuanceDate": "2026-04-01T12:00:00Z",
+  "expirationDate": "2027-04-01T12:00:00Z",
+  "credentialSubject": {
+    "id": "did:key:z6MkfooBarBazQuxFakeExampleKey1234567890abcdef",
+    "cpfHash": "sha256:9f7b3a2e1d4c5b6a0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b",
+    "sealCode": "OBAG-A1B2C3-Z9Y8-X4",
+    "maskedName": "J*** S****",
+    "tier": "PRATA",
+    "platforms": ["IFOOD", "RAPPI"],
+    "status": "ATIVO",
+    "issuedAt": "2026-04-01T12:00:00Z"
+  },
+  "credentialStatus": {
+    "id": "https://openbag.foundation/status/2026/4#7d3d2a8e",
+    "type": "RevocationList2020Status",
+    "revocationListIndex": "94567",
+    "revocationListCredential": "https://openbag.foundation/status/2026/4"
+  },
+  "proof": {
+    "type": "Ed25519Signature2020",
+    "created": "2026-04-01T12:00:00Z",
+    "verificationMethod": "did:web:openbag.foundation#key-2026-04",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z3rA8sF2mEXAMPLE_SIGNATURE_BASE58_BTC_ENCODED_VALUE_PLACEHOLDER_FOR_DOCS_ONLY"
+  }
+}

@@ -1,0 +1,29 @@
+name: skill-rep
+version: 1.0.0
+license: MIT
+authors:
+  - OpenBag Foundation <tech@openbag.foundation>
+display_name: Reputação Cívica
+description: >
+  Civic reputation engine. Aggregates platform events, calculates
+  Bronze/Prata/Ouro/Diamante tier, and exposes the current tier to other
+  skills via read:reputation_tier. Tier transitions emit on_tier_change.
+category: core
+maturity: stable
+permissions:
+  - read:reputation_tier
+  - read:platform_list
+  - read:status_current
+  - write:reputation_event
+  - storage:encrypted_local
+  - notifications:local
+dependencies:
+  agent: ">= 0.5.0"
+hooks:
+  on_install: scripts/on_install.js
+  on_first_run: scripts/on_first_run.js
+  on_wake: scripts/on_wake.js
+  on_tier_change: scripts/on_tier_change.js
+docs: https://github.com/openbagfoundation/clawhub-br/tree/main/registry/skill-rep
+repository: https://github.com/openbagfoundation/openbag
+audit_url: https://transparency.openbag.foundation/audits/skill-rep-v1

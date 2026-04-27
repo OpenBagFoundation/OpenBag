@@ -1,0 +1,30 @@
+name: skill-verify
+version: 1.0.0
+license: MIT
+authors:
+  - OpenBag Foundation <tech@openbag.foundation>
+display_name: Verificação Cidadã
+description: >
+  Core verification handler. Responds to citizen verification events
+  triggered via QR scan, NFC tap, or BLE proximity. Returns the worker's
+  current seal status, tier, masked name, and platform affiliations.
+category: core
+maturity: stable
+permissions:
+  - read:reputation_tier
+  - read:platform_list
+  - read:status_current
+  - ble:advertise
+  - nfc:read
+  - notifications:local
+  - storage:encrypted_local
+dependencies:
+  agent: ">= 0.5.0"
+hooks:
+  on_install: scripts/on_install.js
+  on_first_run: scripts/on_first_run.js
+  on_verify: scripts/on_verify.js
+  on_wake: scripts/on_wake.js
+docs: https://github.com/openbagfoundation/clawhub-br/tree/main/registry/skill-verify
+repository: https://github.com/openbagfoundation/openbag
+audit_url: https://transparency.openbag.foundation/audits/skill-verify-v1
