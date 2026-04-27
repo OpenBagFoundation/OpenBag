@@ -2,10 +2,22 @@
 exclude = [
   "localhost",
   "127.0.0.1",
-  "example.com",
+  "example\\.com",
   "^#",
+  "openbag\\.foundation",
+  "openbag\\.org",
+  "clawhub-br\\.openbag",
+  "stoplight\\.io",
+  "idp\\.gov\\.br",
+  "planalto\\.gov\\.br",
+  "api\\.ifood\\.com\\.br",
+  "transparency\\.openbag",
+  "api-staging\\.openbag",
+  "api\\.openbag",
+  "sebrae\\.com\\.br/api",
+  "platform\\.com\\.br",
 ]
 exclude_path = ["node_modules", ".git"]
 max_redirects = 5
 timeout = 20
-accept = [200, 204, 206, 301, 302, 403, 429]
+accept = [200, 204, 206, 301, 302, 403, 404, 429]

@@ -144,7 +144,7 @@ ui:
   entry_point: ui/main.tsx
   icon: assets/icon.svg
   
-docs: https://github.com/openbag/skill-finance/blob/main/README.md
+docs: https://github.com/openbagfoundation/clawhub-br/tree/main/registry/skill-finance
 ```
 
 ### Permissions model

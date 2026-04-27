@@ -27,11 +27,17 @@ for the full catalogue and category definitions.
 
 A skill can implement any of these lifecycle hooks:
 
-| Hook           | When it fires                                        |
-|----------------|------------------------------------------------------|
-| `onInstall`    | Immediately after the skill is installed             |
-| `onUninstall`  | Before the skill is removed                         |
-| `onVerify`     | When a citizen triggers a verification event         |
+| Hook            | When it fires                                       |
+|-----------------|-----------------------------------------------------|
+| `on_install`    | Immediately after the skill is installed            |
+| `on_first_run`  | First agent boot after install (onboarding)         |
+| `on_uninstall`  | Before the skill is removed                         |
+| `on_wake`       | Each time the agent wakes (periodic heartbeat)      |
+| `on_verify`     | When a citizen triggers a verification event        |
+| `on_panic`      | When panic mode is activated (core-sensitive only)  |
+| `on_route_start`| When worker starts a delivery route                 |
+| `on_route_end`  | When worker ends a delivery route                   |
+| `on_tier_change`| When worker reputation tier changes                 |
 
 ## Building a Skill
 
@@ -61,7 +67,7 @@ Edit `index.js` and export the hook functions your skill needs:
 'use strict';
 
 module.exports = {
-  async onVerify(context) {
+  async on_verify(context) {
     // context.emit('ble-broadcast', { payload: context.badge.id });
   },
 };
@@ -97,24 +103,24 @@ API token is on the roadmap.
 ## SKILL.yaml reference
 
 ```yaml
-apiVersion: openbag.org/v1alpha1
-kind: Skill
-metadata:
-  name: skill-example          # kebab-case, unique in the registry
-  version: 0.1.0               # semantic versioning
-  description: One-line summary
-  author: your-github-handle
-  category: community          # core | community | experimental
-  license: MIT
-spec:
-  permissions:                 # only request what you need
-    - ble-scan
-    - location
-  entrypoint: index.js         # relative to the skill directory
-  hooks:
-    onInstall: null            # set to a function name to override
-    onUninstall: null
-    onVerify: null
+name: skill-example            # kebab-case, must start with "skill-"
+version: 0.1.0                 # semver
+license: MIT                   # SPDX identifier
+authors:
+  - Your Name <you@example.com>
+display_name: Example Skill
+description: One-to-three sentence summary shown in ClawHub-BR.
+category: community            # core | community | experimental
+maturity: alpha                # alpha | beta | stable
+permissions:                   # only request what you need
+  - read:reputation_tier
+  - ble:scan
+  - notifications:local
+dependencies:
+  agent: ">= 0.5.0"
+hooks:
+  on_install: scripts/on_install.js
+  on_verify: scripts/on_verify.js
 ```
 
 ## Resources
@@ -123,4 +129,4 @@ spec:
 - [Skill Catalogue spec](../spec/03-skills.md)
 - [Manifest JSON Schema](./skill-manifest.schema.json) _(generated — see schema source)_
 - [Contributing Guide](../CONTRIBUTING.md)
-- [ClawHub-BR Registry](https://github.com/openbag/clawhub-br)
+- [ClawHub-BR Registry](https://github.com/openbagfoundation/clawhub-br)
