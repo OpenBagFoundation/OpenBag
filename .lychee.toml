@@ -16,6 +16,12 @@ exclude = [
   "api\\.openbag",
   "sebrae\\.com\\.br/api",
   "platform\\.com\\.br",
+  "discord\\.gg",
+  "meetup\\.com",
+  "disquedenuncia181\\.es\\.gov\\.br",
+  "ifood\\.com\\.br",
+  "fonts\\.googleapis\\.com",
+  "fonts\\.gstatic\\.com",
 ]
 exclude_path = ["node_modules", ".git"]
 max_redirects = 5
