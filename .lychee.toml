@@ -22,6 +22,9 @@ exclude = [
   "ifood\\.com\\.br",
   "fonts\\.googleapis\\.com",
   "fonts\\.gstatic\\.com",
+  "SEU-USUARIO",
+  "github\\.com/you/",
+  "<domain>",
 ]
 exclude_path = ["node_modules", ".git"]
 max_redirects = 5
