@@ -82,4 +82,4 @@ ecossistema OpenClaw:
 
 ---
 
-*See [docs/OPENCLAW-ALIGNMENT.md](../../docs/OPENCLAW-ALIGNMENT.md) for the full compatibility map.*
+*See [docs/OPENCLAW-ALIGNMENT.md](../../../docs/OPENCLAW-ALIGNMENT.md) for the full compatibility map.*
