@@ -1,4 +1,6 @@
-# Spec 10 — Interoperability
+# Spec 10 — Interoperabilidade · Interoperability
+
+> **Resumo (PT-BR):** Esta especificação define como o OpenBag se conecta a quatro camadas externas: (1) Identificadores Descentralizados W3C (DID) para identidade soberana portátil; (2) Credenciais Verificáveis W3C (VC) para credenciais à prova de adulteração; (3) Gov.br para âncora de identidade brasileira (CPF + biometria); e (4) ecossistema OpenClaw para reputação portátil via `skill-claw-bridge`. O objetivo é que um entregador possa carregar sua identidade e reputação entre plataformas, países e sistemas sem depender de nenhum provedor central.
 
 **Status**: Draft | **Version**: 0.1.0 | **Date**: 2026-04
 

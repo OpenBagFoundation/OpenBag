@@ -113,7 +113,7 @@ git remote add origin https://github.com/openbagfoundation/OpenBag.git
   - Use as labels: `good-first-issue`, `help-wanted`, `core-spec`, `hardware`, `mobile`
 - [ ] Pin o `MANIFESTO.md` no repo
 - [ ] Adicionar **GitHub Action** mínimo para markdown lint
-- [ ] Configurar **GitHub Pages** apontando para `assets/dashboard.html`
+- [ ] Configurar **GitHub Pages** apontando para `docs/` (landing em `docs/index.html`)
 
 ### Na 1ª semana
 
@@ -139,11 +139,10 @@ git remote add origin https://github.com/openbagfoundation/OpenBag.git
 Para servir o dashboard executivo direto do repo:
 
 ```bash
-# Settings → Pages → Source: Deploy from a branch → main → /assets
+# Settings → Pages → Source: Deploy from a branch → main → / (root)
 # URL final: https://openbagfoundation.github.io/OpenBag/
+# Landing page: docs/index.html  |  Dashboard: docs/dashboard.html
 ```
-
-Considere também criar uma landing simples em `/assets/index.html` que redireciona para o dashboard.
 
 ---
 
