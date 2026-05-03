@@ -107,7 +107,7 @@ hooks:
   on_install: scripts/on_install.js
   on_verify: scripts/on_verify.js
 docs: https://github.com/openbagfoundation/clawhub-br/tree/main/registry/skill-example
-repository: https://github.com/you/skill-example
+repository: https://github.com/openbagfoundation/OpenBag
 ```
 
 ### Available permissions

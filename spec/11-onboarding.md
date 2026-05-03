@@ -1,4 +1,6 @@
-# Spec 11 — Worker Onboarding Flow
+# Spec 11 — Fluxo de Onboarding do Entregador · Worker Onboarding Flow
+
+> **Resumo (PT-BR):** Esta especificação define o fluxo completo que um novo entregador percorre desde a primeira abertura do app OpenBag Agent até ter um Selo Digital ativo transmitindo na bag. O fluxo foi desenhado para funcionar em celulares de entrada com conexão intermitente, respeitar a LGPD em cada etapa, e completar o onboarding essencial em menos de 10 minutos. A especificação técnica está em inglês; a UX de onboarding visível ao trabalhador é totalmente em português.
 
 **Status**: Draft | **Version**: 0.1.0 | **Date**: 2026-04
 

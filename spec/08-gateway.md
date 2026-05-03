@@ -1,4 +1,6 @@
-# Spec 08 — Agent Gateway
+# Spec 08 — Gateway do Agente · Agent Gateway
+
+> **Resumo (PT-BR):** O Gateway do Agente é o plano de controle entre o shell do OpenBag Agent e todas as skills instaladas. Ele aplica permissões declaradas no SKILL.yaml, roteia mensagens, gerencia o barramento de eventos e fornece acesso sandboxed ao hardware e armazenamento local. Nenhuma skill pode acessar diretamente APIs do dispositivo, rede ou outras skills sem passar pelo Gateway — garantindo o princípio de mínimo privilégio exigido pela LGPD e pela arquitetura de segurança do projeto.
 
 **Status**: Draft | **Version**: 0.1.0 | **Date**: 2026-04
 

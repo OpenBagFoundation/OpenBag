@@ -25,8 +25,8 @@ git add .
 git commit -m "Initial commit: OpenBag RFC-001 + RFC-002 v1.1 public discussion draft"
 
 # 3. Crie o repositório no GitHub e faça push
-# (substitua SEU-USUARIO pelo seu username, ou use --org SEU-ORG)
-gh repo create SEU-USUARIO/openbag --public \
+# Usando a org OpenBag Foundation (ou substitua por --org openbagfoundation se fizer fork)
+gh repo create openbagfoundation/OpenBag --public \
   --description "Open identity, agent, and civic reputation for last-mile delivery" \
   --homepage "https://openbag.org" \
   --push --source=.
@@ -44,7 +44,7 @@ gh repo edit --add-topic civic-tech \
 # 5. Configure branch padrão (caso necessário)
 gh repo edit --default-branch main
 
-# Pronto · seu repo estará em https://github.com/SEU-USUARIO/openbag
+# Pronto · repo em https://github.com/openbagfoundation/OpenBag
 ```
 
 ---
@@ -68,9 +68,9 @@ git commit -m "Initial commit: OpenBag RFC-001 + RFC-002 v1.1 public discussion 
 #    - NÃO marque "Initialize with README" (já temos)
 #    - Crie o repositório
 
-# 4. Conecte o local ao remote (substitua SEU-USUARIO)
+# 4. Conecte o local ao remote
 git branch -M main
-git remote add origin https://github.com/SEU-USUARIO/openbag.git
+git remote add origin https://github.com/openbagfoundation/OpenBag.git
 git push -u origin main
 
 # 5. Na página do repo no GitHub, clique no ícone de engrenagem ao lado de "About"
@@ -81,18 +81,15 @@ git push -u origin main
 
 ## Opção C · Repositório de organização (recomendado para Foundation)
 
-Se você quer publicar como uma **organização** GitHub (mais alinhado com o caráter comunitário do projeto):
+O projeto já está publicado sob a org **OpenBag Foundation** no GitHub:
 
 ```bash
-# 1. Crie a org "openbag" no GitHub: https://github.com/organizations/new
-#    Plano grátis serve. Nome sugerido: openbag (se disponível)
-
-# 2. Siga a Opção A ou B, mas use a org no lugar do usuário:
-gh repo create openbag/spec --public --push --source=.
+# Repo canônico — já publicado
+gh repo clone openbagfoundation/OpenBag
 # OU
-git remote add origin https://github.com/openbag/spec.git
+git remote add origin https://github.com/openbagfoundation/OpenBag.git
 
-# 3. Adicione co-maintainers à org:
+# Para adicionar co-maintainers à org:
 #    Settings → People → Invite member
 #    (sugestão: contatos da Frente VII · Governance Open-Source da coalizão)
 ```
@@ -116,7 +113,7 @@ git remote add origin https://github.com/openbag/spec.git
   - Use as labels: `good-first-issue`, `help-wanted`, `core-spec`, `hardware`, `mobile`
 - [ ] Pin o `MANIFESTO.md` no repo
 - [ ] Adicionar **GitHub Action** mínimo para markdown lint
-- [ ] Configurar **GitHub Pages** apontando para `assets/dashboard.html`
+- [ ] Configurar **GitHub Pages** apontando para `docs/` (landing em `docs/index.html`)
 
 ### Na 1ª semana
 
@@ -142,11 +139,10 @@ git remote add origin https://github.com/openbag/spec.git
 Para servir o dashboard executivo direto do repo:
 
 ```bash
-# Settings → Pages → Source: Deploy from a branch → main → /assets
-# URL final: https://SEU-USUARIO.github.io/openbag/dashboard.html
+# Settings → Pages → Source: Deploy from a branch → main → / (root)
+# URL final: https://openbagfoundation.github.io/OpenBag/
+# Landing page: docs/index.html  |  Dashboard: docs/dashboard.html
 ```
-
-Considere também criar uma landing simples em `/assets/index.html` que redireciona para o dashboard.
 
 ---
 

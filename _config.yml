@@ -2,7 +2,7 @@ title: OpenBag
 description: Open identity, agent, and civic reputation for last-mile delivery.
 baseurl: ""
 url: "https://openbagfoundation.github.io"
-repository: openbagfoundation/openbag
+repository: openbagfoundation/OpenBag
 
 theme: minima
 
@@ -80,3 +80,17 @@ nav:
     url: /GOVERNANCE
   - title: Segurança
     url: /SECURITY
+  - title: Contribuidores
+    url: /CONTRIBUTORS
+  - title: DPIA LGPD
+    url: /docs/dpia
+  - title: RFCs
+    url: /docs/rfcs/0000-template
+  - title: Gateway
+    url: /spec/08-gateway
+  - title: ClawHub-BR
+    url: /spec/09-clawhub-br
+  - title: Interop
+    url: /spec/10-interop
+  - title: Onboarding
+    url: /spec/11-onboarding

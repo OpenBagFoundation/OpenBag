@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated_at": "2026-04-26T19:45:00-03:00",
+  "generated_at": "2026-05-03T00:00:00-03:00",
   "registry_url": "https://github.com/openbagfoundation/clawhub-br",
   "skills": [
     {
@@ -17,6 +17,7 @@
       "published_at": "2026-04-26T00:00:00-03:00",
       "docs": "https://github.com/openbagfoundation/clawhub-br/tree/main/registry/skill-verify",
       "audit_url": "https://transparency.openbag.foundation/audits/skill-verify-v1",
+      "openclaw_compatible": true,
       "permissions": [
         "read:reputation_tier",
         "read:platform_list",
@@ -42,6 +43,7 @@
       "published_at": "2026-04-26T00:00:00-03:00",
       "docs": "https://github.com/openbagfoundation/clawhub-br/tree/main/registry/skill-rep",
       "audit_url": "https://transparency.openbag.foundation/audits/skill-rep-v1",
+      "openclaw_compatible": true,
       "permissions": [
         "read:reputation_tier",
         "read:platform_list",
@@ -66,6 +68,7 @@
       "published_at": "2026-04-26T00:00:00-03:00",
       "docs": "https://github.com/openbagfoundation/clawhub-br/tree/main/registry/skill-sentinel",
       "audit_url": "https://transparency.openbag.foundation/audits/skill-sentinel-v1",
+      "openclaw_compatible": true,
       "permissions": [
         "read:status_current",
         "write:agent_inbox",
@@ -75,6 +78,31 @@
         "http:sentinel.openbag.foundation/v0/reports"
       ],
       "hooks": ["on_install", "on_verify"]
+    },
+    {
+      "name": "skill-claw-bridge",
+      "display_name": "OpenClaw Bridge · Reputação Portátil",
+      "version": "1.0.0",
+      "category": "community",
+      "maturity": "beta",
+      "license": "MIT",
+      "description": "Portable reputation bridge between OpenBag and OpenClaw ecosystems. Exports the worker's OpenBag civic tier as a W3C Verifiable Credential, imports an OpenClaw reputation VC, and synchronises tier recognition across both platforms on each agent wake cycle.",
+      "authors": ["OpenBag Foundation <tech@openbag.foundation>"],
+      "trust_tier": "foundation",
+      "checksum": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "published_at": "2026-05-03T00:00:00-03:00",
+      "docs": "https://github.com/OpenBagFoundation/OpenBag/tree/main/sdk/skills/skill-claw-bridge",
+      "audit_url": "https://transparency.openbag.foundation/audits/skill-claw-bridge-v1",
+      "openclaw_compatible": true,
+      "permissions": [
+        "read:reputation_tier",
+        "read:status_current",
+        "write:reputation_event",
+        "storage:encrypted_local",
+        "notifications:local",
+        "network:foundation_api"
+      ],
+      "hooks": ["on_install", "on_first_run", "on_wake", "on_tier_change"]
     }
   ]
 }

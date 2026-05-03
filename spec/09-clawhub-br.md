@@ -1,4 +1,6 @@
-# Spec 09 — ClawHub-BR
+# Spec 09 — ClawHub-BR · Registro de Skills
+
+> **Resumo (PT-BR):** O ClawHub-BR é o registro comunitário de skills para o ecossistema OpenBag — adaptação brasileira da arquitetura do OpenClaw ClawHub para o contexto de civic-tech e última milha. Permite que desenvolvedores terceiros (fintechs, plataformas, ONGs, municípios) publiquem, descubram e instalem skills que estendem o OpenBag Agent. Não é uma app store: é um registro curado, open-source, com skills auditadas para conformidade LGPD e publicadas sob licenças aprovadas pela OSI.
 
 **Status**: Draft | **Version**: 0.1.0 | **Date**: 2026-04
 

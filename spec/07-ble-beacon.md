@@ -1,4 +1,6 @@
-# RFC-BLE-001 — OpenBag Rotating BLE Beacon Specification
+# RFC-BLE-001 — Especificação do Beacon BLE Rotativo · OpenBag
+
+> **Resumo (PT-BR):** Este documento especifica o protocolo de beacon BLE com identificador rotativo utilizado nas bags e crachás dos entregadores. O beacon permite verificação passiva à distância de até 30 m sem interação do trabalhador, usando HMAC-SHA256 rotacionado a cada 5 minutos para prevenir rastreamento e clonagem. Hardware alvo: Nordic nRF52840 (bag/colete) e nRF52833 (crachá vivo). A especificação técnica completa está em inglês para compatibilidade com o ecossistema de firmware internacional.
 
 **Status**: Draft v0.1.0  
 **Hardware targets**: Nordic nRF52840 (bag/colete), Nordic nRF52833 (crachá vivo)  

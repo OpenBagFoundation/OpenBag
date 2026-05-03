@@ -1,19 +1,39 @@
-# LGPD Compliance Analysis — OpenBag Foundation
+# Análise de Conformidade LGPD · OpenBag Foundation
 
-| Field | Value |
+> 🇬🇧 *English version below — this document is primarily in English for international legal reference, with a Portuguese executive summary above.*
+
+| Campo | Valor |
 |-------|-------|
-| **Version** | 0.1.0-draft |
-| **Date** | 2026-04-26 |
-| **Status** | Draft for public comment — resolves issue #007 |
-| **Applicable law** | Lei Geral de Proteção de Dados (LGPD), Lei 13.709/2018 |
-| **Regulatory body** | ANPD (Autoridade Nacional de Proteção de Dados) |
-| **Authors** | OpenBag Legal Working Group |
+| **Versão** | 0.1.0-rascunho |
+| **Data** | 2026-04-26 |
+| **Status** | Rascunho para comentário público — resolve issue #007 |
+| **Lei aplicável** | Lei Geral de Proteção de Dados (LGPD), Lei 13.709/2018 |
+| **Órgão regulador** | ANPD (Autoridade Nacional de Proteção de Dados) |
+| **Autores** | Grupo de Trabalho Jurídico · OpenBag Foundation |
 
-> **Disclaimer**: This document is a good-faith analysis for public review. It is not legal advice. The Foundation will engage LGPD-certified counsel and submit to ANPD review before any production deployment.
+> **Aviso legal**: Este documento é uma análise de boa-fé para revisão pública. Não constitui aconselhamento jurídico. A Fundação contratará assessoria certificada em LGPD e submeterá à revisão da ANPD antes de qualquer implantação em produção.
 
 ---
 
-## 1. Executive Summary
+## Resumo executivo (PT-BR)
+
+O OpenBag processa dados pessoais — incluindo dados biométricos classificados como sensíveis pelo Art. 11 da LGPD — a serviço de uma missão clara de segurança pública: reduzir crimes violentos contra e por meio de entregadores no Brasil.
+
+**Decisões de design que minimizam o risco LGPD:**
+
+1. **Arquitetura local-first** — o agente pessoal do trabalhador roda no próprio dispositivo. Dados sensíveis (biometria bruta, histórico de rotas, relatos Sentinel) nunca chegam aos servidores da Fundação.
+2. **Nenhum CPF bruto armazenado** — o CPF entra no sistema uma única vez (na emissão do selo), é imediatamente hasheado (`SHA-256(cpf || salt_fundacao)`) e apenas o hash é persistido.
+3. **Identificadores rotativos** — MAC BLE e QR codes rotacionam a cada 5 minutos; nenhum identificador persistente é transmitido.
+4. **Consentimento granular e revogável** — os trabalhadores fornecem consentimento informado e versionado no onboarding, auditável retroativamente.
+5. **Anonimato criptográfico no Sentinel** — relatos passam por mixnet/onion network; nem mesmo operadores da Fundação conseguem vincular um relato à identidade do reporter.
+
+**Postura geral de conformidade**: Média–Alta. Lacunas existem (ver Seção 10) e estão sendo endereçadas; nenhuma é bloqueante para a Fase α com fluxos de consentimento adequados e DPAs em vigor.
+
+Para o DPIA formal (Art. 38), veja [dpia.md](dpia.md).
+
+---
+
+
 
 OpenBag processes personal data — including biometric data classified as sensitive under Art. 11 LGPD — in service of a clear public safety mission: reducing violent crime against and using delivery workers (entregadores) in Brazil.
 

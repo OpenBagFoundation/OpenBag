@@ -1,26 +1,65 @@
 {
+  "id": "/apps/verifica/",
   "name": "OpenBag Verifica",
-  "short_name": "OBVerifica",
-  "description": "Verifique entregadores com Selo OpenBag em segundos.",
+  "short_name": "Verifica",
+  "description": "Verifique a identidade de entregadores com Selo OpenBag em segundos. Sem cadastro, sem custo, sem login de plataforma.",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "browser"],
   "background_color": "#fdf8f0",
   "theme_color": "#b45309",
   "orientation": "portrait",
-  "categories": ["utilities", "social"],
+  "categories": ["utilities", "social", "lifestyle", "navigation"],
   "lang": "pt-BR",
+  "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
-    { "src": "../../assets/brand/avatar-primary-128.png", "sizes": "128x128", "type": "image/png" },
-    { "src": "../../assets/brand/avatar-primary-256.png", "sizes": "256x256", "type": "image/png" },
-    { "src": "../../assets/brand/avatar-primary-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "../../assets/brand/avatar-primary-1024.png", "sizes": "1024x1024", "type": "image/png" }
+    { "src": "../../assets/brand/avatar-primary-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "../../assets/brand/avatar-primary-256.png", "sizes": "256x256", "type": "image/png", "purpose": "any" },
+    { "src": "../../assets/brand/avatar-primary-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "../../assets/brand/avatar-primary-1024.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" }
   ],
   "shortcuts": [
     {
       "name": "Escanear QR",
       "short_name": "Scan",
+      "description": "Abrir câmera para escanear QR Code do Selo OpenBag",
       "url": "./index.html#scan",
-      "description": "Abrir câmera para escanear QR Code"
+      "icons": [{ "src": "../../assets/brand/avatar-minimal.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Código manual",
+      "short_name": "Manual",
+      "description": "Inserir código do selo manualmente",
+      "url": "./index.html#manual",
+      "icons": [{ "src": "../../assets/brand/avatar-minimal.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Reportar",
+      "short_name": "Reportar",
+      "description": "Enviar relato anônimo de incidente",
+      "url": "./index.html#report",
+      "icons": [{ "src": "../../assets/brand/avatar-minimal.svg", "sizes": "any", "type": "image/svg+xml" }]
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "../../assets/brand/social-banner.svg",
+      "sizes": "1200x630",
+      "type": "image/svg+xml",
+      "form_factor": "wide",
+      "label": "Tela inicial do app Verifica"
+    }
+  ],
+  "related_applications": [],
+  "share_target": {
+    "action": "./index.html#scan",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "code",
+      "url": "url"
+    }
+  }
 }

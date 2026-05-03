@@ -1,0 +1,31 @@
+name: skill-claw-bridge
+version: 1.0.0
+license: MIT
+authors:
+  - OpenBag Foundation <tech@openbag.foundation>
+display_name: "OpenClaw Bridge · Reputação Portátil"
+description: >
+  Portable reputation bridge between OpenBag and OpenClaw ecosystems.
+  Exports the worker's OpenBag civic tier as a W3C Verifiable Credential,
+  imports an OpenClaw reputation VC, and synchronises tier recognition
+  across both platforms on each agent wake cycle.
+category: community
+maturity: beta
+permissions:
+  - read:reputation_tier
+  - read:status_current
+  - write:reputation_event
+  - storage:encrypted_local
+  - notifications:local
+  - network:foundation_api
+dependencies:
+  agent: ">= 0.5.0"
+  skills:
+    - name: skill-rep
+      version: ">= 1.0.0"
+hooks:
+  on_install: scripts/on_install.js
+  on_first_run: scripts/on_first_run.js
+  on_wake: scripts/on_wake.js
+  on_tier_change: scripts/on_tier_change.js
+openclaw_compatible: true
