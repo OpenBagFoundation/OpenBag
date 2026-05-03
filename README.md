@@ -179,7 +179,7 @@ Veja [docs/dev-setup.md](docs/dev-setup.md) para guia detalhado de setup local, 
 | 🤲 [Como Contribuir](CONTRIBUTING.md) | Guia completo de contribuição |
 | 🛠️ [Dev Setup](docs/dev-setup.md) | Setup do ambiente de desenvolvimento |
 
-📊 **Dashboard executivo:** [`assets/dashboard.html`](assets/dashboard.html) — abra em qualquer navegador.
+📊 **Dashboard executivo:** [`docs/dashboard.html`](docs/dashboard.html) — abra em qualquer navegador.
 🌐 **Landing page:** [`docs/index.html`](docs/index.html) — abra em qualquer navegador.
 
 ---
