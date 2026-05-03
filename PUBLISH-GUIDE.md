@@ -25,8 +25,8 @@ git add .
 git commit -m "Initial commit: OpenBag RFC-001 + RFC-002 v1.1 public discussion draft"
 
 # 3. Crie o repositório no GitHub e faça push
-# (substitua SEU-USUARIO pelo seu username, ou use --org SEU-ORG)
-gh repo create SEU-USUARIO/openbag --public \
+# Usando a org OpenBag Foundation (ou substitua por --org SEU-ORG se fizer fork)
+gh repo create openbagfoundation/OpenBag --public \
   --description "Open identity, agent, and civic reputation for last-mile delivery" \
   --homepage "https://openbag.org" \
   --push --source=.
@@ -44,7 +44,7 @@ gh repo edit --add-topic civic-tech \
 # 5. Configure branch padrão (caso necessário)
 gh repo edit --default-branch main
 
-# Pronto · seu repo estará em https://github.com/SEU-USUARIO/openbag
+# Pronto · repo em https://github.com/openbagfoundation/OpenBag
 ```
 
 ---
@@ -68,9 +68,9 @@ git commit -m "Initial commit: OpenBag RFC-001 + RFC-002 v1.1 public discussion 
 #    - NÃO marque "Initialize with README" (já temos)
 #    - Crie o repositório
 
-# 4. Conecte o local ao remote (substitua SEU-USUARIO)
+# 4. Conecte o local ao remote
 git branch -M main
-git remote add origin https://github.com/SEU-USUARIO/openbag.git
+git remote add origin https://github.com/openbagfoundation/OpenBag.git
 git push -u origin main
 
 # 5. Na página do repo no GitHub, clique no ícone de engrenagem ao lado de "About"
