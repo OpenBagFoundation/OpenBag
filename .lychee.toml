@@ -22,7 +22,6 @@ exclude = [
   "ifood\\.com\\.br",
   "fonts\\.googleapis\\.com",
   "fonts\\.gstatic\\.com",
-  "SEU-USUARIO",
   "github\\.com/you/",
   "<domain>",
 ]

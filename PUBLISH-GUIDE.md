@@ -143,7 +143,7 @@ Para servir o dashboard executivo direto do repo:
 
 ```bash
 # Settings → Pages → Source: Deploy from a branch → main → /assets
-# URL final: https://SEU-USUARIO.github.io/openbag/dashboard.html
+# URL final: https://openbagfoundation.github.io/OpenBag/
 ```
 
 Considere também criar uma landing simples em `/assets/index.html` que redireciona para o dashboard.
