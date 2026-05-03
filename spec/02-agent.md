@@ -221,11 +221,11 @@ Em alguns cenários, agentes se comunicam:
 
 | Componente | Status | Repo |
 |------------|--------|------|
-| Spec do agente | Draft 0.5 | `openbag/spec` |
-| Mobile app reference | Em desenvolvimento (alpha) | `openbag/agent-mobile` (a criar) |
-| ClawHub-BR registry | Em desenvolvimento | `openbag/clawhub-br` (a criar) |
-| Skill SDK | Em desenvolvimento | `openbag/skill-sdk` (a criar) |
-| Reference skills (core) | Em desenvolvimento | `openbag/skill-*` (a criar) |
+| Spec do agente | Draft 0.5 | `openbagfoundation/OpenBag` |
+| Mobile app reference | Em desenvolvimento (alpha) | `openbagfoundation/OpenBag` (a criar) |
+| ClawHub-BR registry | Em desenvolvimento | `openbagfoundation/clawhub-br` (a criar) |
+| Skill SDK | Em desenvolvimento | `openbagfoundation/OpenBag` (sdk/) |
+| Reference skills (core) | Em desenvolvimento | `openbagfoundation/OpenBag` (sdk/skills/) |
 
 Issues abertas para contribuidores:
 - `#101` Implementação do gateway local em Rust

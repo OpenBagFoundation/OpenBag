@@ -25,7 +25,7 @@ git add .
 git commit -m "Initial commit: OpenBag RFC-001 + RFC-002 v1.1 public discussion draft"
 
 # 3. Crie o repositório no GitHub e faça push
-# Usando a org OpenBag Foundation (ou substitua por --org SEU-ORG se fizer fork)
+# Usando a org OpenBag Foundation (ou substitua por --org openbagfoundation se fizer fork)
 gh repo create openbagfoundation/OpenBag --public \
   --description "Open identity, agent, and civic reputation for last-mile delivery" \
   --homepage "https://openbag.org" \
@@ -81,18 +81,15 @@ git push -u origin main
 
 ## Opção C · Repositório de organização (recomendado para Foundation)
 
-Se você quer publicar como uma **organização** GitHub (mais alinhado com o caráter comunitário do projeto):
+O projeto já está publicado sob a org **OpenBag Foundation** no GitHub:
 
 ```bash
-# 1. Crie a org "openbag" no GitHub: https://github.com/organizations/new
-#    Plano grátis serve. Nome sugerido: openbag (se disponível)
-
-# 2. Siga a Opção A ou B, mas use a org no lugar do usuário:
-gh repo create openbag/spec --public --push --source=.
+# Repo canônico — já publicado
+gh repo clone openbagfoundation/OpenBag
 # OU
-git remote add origin https://github.com/openbag/spec.git
+git remote add origin https://github.com/openbagfoundation/OpenBag.git
 
-# 3. Adicione co-maintainers à org:
+# Para adicionar co-maintainers à org:
 #    Settings → People → Invite member
 #    (sugestão: contatos da Frente VII · Governance Open-Source da coalizão)
 ```
